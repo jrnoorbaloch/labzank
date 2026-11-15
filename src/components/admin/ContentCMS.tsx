@@ -167,11 +167,11 @@ export const TABLES: Record<TableKey, { title: string; singular: string; titleFi
   },
   hero_slides: {
     title: "Hero slider", singular: "slide", titleField: "heading", hasStatus: false,
-    note: "The homepage carousel. Wide images work best (about 1600 × 560, artwork on the left, calm space on the right for the text). Without an image the built-in artwork for that position is shown.",
+    note: "The homepage carousel. Every field is optional — upload just an image to make an image-only slide. Best image size 1920 × 690 (or 2400 × 860); if the slide has text, keep the artwork on the left and calm space on the right. Without an image the built-in artwork for that position is shown.",
     defaults: { enabled: true, sort: 0, cta: [] },
     fields: [
-      { key: "heading", label: "Heading", type: "L", required: true, wide: true },
-      { key: "description", label: "Description", type: "Ltext", wide: true },
+      { key: "heading", label: "Heading (optional)", type: "L", wide: true },
+      { key: "description", label: "Description (optional)", type: "Ltext", wide: true },
       { key: "image_desktop_path", label: "Image (desktop)", type: "image" },
       { key: "image_mobile_path", label: "Image (mobile, optional)", type: "image" },
       { key: "cta", label: "Button", type: "cta", wide: true, hint: "Link examples: @poetry, @poets, @library, @dictionary, #folk, or a full https:// address. Leave the label empty for no button." },
@@ -491,7 +491,7 @@ export function ContentManager({ table }: { table: TableKey }) {
         {shown.map((r) => (
           <div key={r.id} className="flex flex-wrap items-center gap-4 px-5 py-3 hover:bg-[var(--ink-2)]">
             <button className="min-w-[220px] flex-1 text-start" onClick={() => open(r)}>
-              <span lang="bal" dir="rtl" className="me-3 text-[18px]">{pickL(r[cfg.titleField])}</span>
+              <span lang="bal" dir="rtl" className="me-3 text-[18px]">{table === "hero_slides" && !r.heading ? "🖼 Image slide" : pickL(r[cfg.titleField])}</span>
               <span className="text-[13px] text-[var(--dim)]">{typeof r[cfg.titleField] === "object" ? r[cfg.titleField]?.en ?? "" : r.slug}</span>
             </button>
             <span className="w-16 truncate text-center text-[12px] text-[var(--dim)]" dir="ltr">{r.sort !== undefined ? `#${r.sort}` : r.slug}</span>

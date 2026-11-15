@@ -3,7 +3,9 @@
 /**
  * Image carousel hero. Slides come from Admin → Literature → Hero slider
  * (hero_slides). A slide without an uploaded image uses the built-in artwork
- * for its position. Autoplays, pauses on hover/focus, swipes on touch.
+ * for its position. Heading, description and button are all optional: a
+ * slide with none of them is shown as a full-width image only.
+ * Autoplays, pauses on hover/focus, swipes on touch.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -26,6 +28,11 @@ export default function HeroCarousel() {
   const [paused, setPaused] = useState(false);
   const touch = useRef<number | null>(null);
   const n = heroSlides.length;
+  const hasText = (k: number) => {
+    const sl = heroSlides[k];
+    return !!sl && (!!pick(sl.heading).text?.trim() || !!pick(sl.description).text?.trim() || !!sl.cta);
+  };
+  const bare = !hasText(i);
   const go = useCallback((d: number) => setI((x) => (x + d + n) % n), [n]);
 
   useEffect(() => {
@@ -57,10 +64,12 @@ export default function HeroCarousel() {
       }}
       data-hero
     >
-      <div className="relative h-[480px] md:h-[clamp(380px,36vw,540px)]">
+      {bare && <h1 className="sr-only">Labzaank — Balochi literature</h1>}
+      <div className={`relative transition-[height] duration-500 md:h-[clamp(380px,36vw,540px)] ${bare ? "h-[56vw] min-h-[200px]" : "h-[480px]"}`}>
         {heroSlides.map((s, k) => {
           const img = s.image ?? heroArt[k % heroArt.length];
           const on = k === i;
+          const text = hasText(k);
           return (
             <div
               key={k}
@@ -72,18 +81,18 @@ export default function HeroCarousel() {
               data-slide={k}
             >
               {/* phones: artwork on top, text below; wider screens: text over the calm right side */}
-              <picture className="absolute inset-x-0 top-0 block h-[210px] overflow-hidden md:inset-0 md:h-full">
+              <picture className={`absolute inset-x-0 top-0 block overflow-hidden md:inset-0 md:h-full ${text ? "h-[210px]" : "h-full"}`}>
                 {s.imageMobile && <source media="(max-width: 767px)" srcSet={s.imageMobile} />}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img} alt="" className="h-full w-full object-cover object-left" loading={k === 0 ? "eager" : "lazy"} />
+                <img src={img} alt="" className={`h-full w-full object-cover ${text ? "object-left" : "object-center"}`} loading={k === 0 ? "eager" : "lazy"} />
               </picture>
-              <div className="absolute inset-x-0 bottom-0 top-[210px] flex flex-col items-center justify-center bg-[#faf6ee] px-6 pb-8 text-center md:inset-y-0 md:left-auto md:right-[5%] md:top-0 md:w-[48%] md:bg-transparent md:pb-0">
-                <Tx
+              {text && <div className="absolute inset-x-0 bottom-0 top-[210px] flex flex-col items-center justify-center bg-[#faf6ee] px-6 pb-8 text-center md:inset-y-0 md:left-auto md:right-[5%] md:top-0 md:w-[48%] md:bg-transparent md:pb-0">
+                {pick(s.heading).text?.trim() && <Tx
                   v={s.heading}
                   as="h1"
                   className="display text-[clamp(30px,4.2vw,64px)] text-[#5c3d0e]"
-                />
-                {pick(s.description).text && (
+                />}
+                {pick(s.description).text?.trim() && (
                   <Tx v={s.description} as="p" className="mt-3 max-w-[40ch] text-[clamp(15px,1.35vw,20px)] leading-relaxed text-[#3d3427]" />
                 )}
                 {s.cta && (
@@ -91,17 +100,17 @@ export default function HeroCarousel() {
                     <Tx v={s.cta.label} />
                   </a>
                 )}
-              </div>
+              </div>}
             </div>
           );
         })}
 
         {n > 1 && (
           <>
-            <button onClick={() => go(-1)} className="absolute left-3 top-[105px] grid h-10 w-10 -translate-y-1/2 md:top-1/2 place-items-center rounded-md bg-white/70 text-[var(--text)] shadow hover:bg-white" aria-label="Previous slide">
+            <button onClick={() => go(-1)} className={`absolute left-3 ${bare ? "top-1/2" : "top-[105px]"} grid h-10 w-10 -translate-y-1/2 md:top-1/2 place-items-center rounded-md bg-white/70 text-[var(--text)] shadow hover:bg-white`} aria-label="Previous slide">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 6-6 6 6 6" /></svg>
             </button>
-            <button onClick={() => go(1)} className="absolute right-3 top-[105px] grid h-10 w-10 -translate-y-1/2 md:top-1/2 place-items-center rounded-md bg-white/70 text-[var(--text)] shadow hover:bg-white" aria-label="Next slide">
+            <button onClick={() => go(1)} className={`absolute right-3 ${bare ? "top-1/2" : "top-[105px]"} grid h-10 w-10 -translate-y-1/2 md:top-1/2 place-items-center rounded-md bg-white/70 text-[var(--text)] shadow hover:bg-white`} aria-label="Next slide">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 6 6 6-6 6" /></svg>
             </button>
             <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2" dir="ltr">

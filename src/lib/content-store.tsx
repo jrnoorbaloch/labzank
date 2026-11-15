@@ -115,7 +115,7 @@ async function load(): Promise<Partial<Content>> {
     out.heroSlides = rows(h).map((r) => {
       const cta = Array.isArray(r.cta) ? (r.cta[0] as { label?: L; href?: string } | undefined) : undefined;
       return {
-        heading: r.heading as L,
+        heading: (r.heading as L) ?? { bal: "" },
         description: (r.description as L) ?? { bal: "" },
         image: mediaUrl("images", r.image_desktop_path as string),
         imageMobile: mediaUrl("images", r.image_mobile_path as string),
