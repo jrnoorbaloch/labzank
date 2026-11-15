@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/db/client";
 import { toast } from "@/components/dictionary/AdminEditing";
 import { Lang, LANGS, LangSettings, useLang } from "@/lib/i18n";
+import { DEFAULT_BRANDING, parseBranding, publish } from "@/lib/branding";
 import { Bucket, LIMITS, bookPdfUrl, mediaUrl, removeMedia, uploadMedia } from "@/lib/media";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -197,7 +198,7 @@ function MediaField({ kind, folder, value, set, onUploaded, onDuration }: { kind
   const url = kind === "pdf" ? undefined : mediaUrl(bucket as "images" | "audio", value);
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-[var(--faint)] p-3" data-media={kind}>
-      {value && kind === "image" && <img src={url} alt="" className="h-20 w-20 rounded-md object-cover" />}
+      {value && kind === "image" && <img src={url} alt="" className="h-20 w-auto max-w-[220px] rounded-md bg-[var(--ink-2)] object-contain" />}
       {value && kind === "audio" && <audio controls src={url} className="h-9 max-w-full" preload="metadata" />}
       {value && kind === "pdf" && <button type="button" className="chip" onClick={openPdf}>Open PDF ↗</button>}
       {value && <span className="max-w-[220px] truncate font-mono text-[11px] text-[var(--dim)]" title={value}>{value.split("/").pop()}</span>}
@@ -711,6 +712,101 @@ export function Messages() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────── branding (site name + logo) ─────────────────────────── */
+
+export function BrandingSettings() {
+  const [name, setName] = useState("");
+  const [logo, setLogo] = useState<string | null>(null);
+  const [logoDark, setLogoDark] = useState<string | null>(null);
+  const [saved, setSaved] = useState<{ name: string; logo: string | null; logoDark: string | null } | null>(null);
+  const [fresh, setFresh] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    supabase!.from("site_settings").select("value").eq("key", "branding").maybeSingle().then(({ data, error }) => {
+      if (error) return toast(error.message);
+      const b = parseBranding(data?.value) ?? DEFAULT_BRANDING;
+      setName(b.name); setLogo(b.logoPath); setLogoDark(b.logoDarkPath);
+      setSaved({ name: b.name, logo: b.logoPath, logoDark: b.logoDarkPath });
+    });
+  }, []);
+  if (!saved) return <p className="text-[var(--dim)]">Loading…</p>;
+  const dirty = name.trim() !== saved.name || logo !== saved.logo || logoDark !== saved.logoDark;
+  const save = async () => {
+    const n = name.trim();
+    if (!n) return toast("Site name is required.");
+    if (n.length > 60) return toast("Keep the site name under 60 characters.");
+    setSaving(true);
+    const value = { name: n, logo_path: logo, logo_dark_path: logoDark };
+    const { error } = await supabase!.from("site_settings").upsert({ key: "branding", value, updated_at: new Date().toISOString() });
+    setSaving(false);
+    if (error) return toast(error.code === "42501" ? "Only an admin can change branding." : error.message);
+    // remove files that were replaced or removed, and unsaved uploads
+    const keep = new Set([logo, logoDark].filter(Boolean));
+    const drop = [saved.logo, saved.logoDark, ...fresh].filter((p): p is string => !!p && !keep.has(p));
+    if (drop.length) await removeMedia("images", drop);
+    setFresh([]);
+    setSaved({ name: n, logo, logoDark });
+    publish({ name: n, logoPath: logo, logoDarkPath: logoDark });
+    toast("Branding saved", "ok");
+  };
+  const discard = async () => {
+    const keep = new Set([saved.logo, saved.logoDark]);
+    const drop = fresh.filter((p) => !keep.has(p));
+    if (drop.length) await removeMedia("images", drop);
+    setFresh([]);
+    setName(saved.name); setLogo(saved.logo); setLogoDark(saved.logoDark);
+  };
+  const preview = (path: string | null, dark: boolean) => {
+    const url = mediaUrl("images", path);
+    return (
+      <div className={`flex h-20 items-center rounded-lg px-6 ${dark ? "bg-[var(--band)]" : "border border-[var(--faint)] bg-white"}`} data-brand-preview={dark ? "dark" : "light"}>
+        {url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={url} alt={name} className="h-[34px] w-auto max-w-[220px] object-contain" />
+        ) : (
+          <span className={`text-[23px] font-black leading-none ${dark ? "text-[#e9c27a]" : "text-[var(--text)]"}`} style={{ fontFamily: "var(--latin-display)" }}>
+            {name.trim() || "—"}
+          </span>
+        )}
+      </div>
+    );
+  };
+  return (
+    <div className="max-w-[820px]">
+      <h1 className="text-[28px] font-semibold tracking-tight">Branding</h1>
+      <p className="mb-6 mt-1 text-[14px] text-[var(--dim)]">The site name and logo used across the website. Without a logo the name is shown as a text wordmark.</p>
+      <div className="card grid gap-6 p-6">
+        <label className="block text-[13px]">
+          <span className="mb-1 block text-[var(--dim)]">Site name<span className="text-[var(--rust)]"> *</span></span>
+          <input value={name} onChange={(e) => setName(e.target.value)} maxLength={60} className={`${inputCls} max-w-[420px] text-[16px]`} data-brand-name />
+          <span className="mt-1 block text-[11px] text-[var(--dim)]/70">Shown as the text logo, in browser tabs and in headings such as “More from …”.</span>
+        </label>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="text-[13px]">
+            <span className="mb-1 block text-[var(--dim)]">Logo — light background (header)</span>
+            <MediaField kind="image" folder="site" value={logo} set={setLogo} onUploaded={(p) => setFresh((f) => [...f, p])} />
+            <span className="mt-1 block text-[11px] text-[var(--dim)]/70">Transparent PNG or WebP, about 440 × 68 px. Leave empty to use the text name.</span>
+          </div>
+          <div className="text-[13px]">
+            <span className="mb-1 block text-[var(--dim)]">Logo — dark background (footer, optional)</span>
+            <MediaField kind="image" folder="site" value={logoDark} set={setLogoDark} onUploaded={(p) => setFresh((f) => [...f, p])} />
+            <span className="mt-1 block text-[11px] text-[var(--dim)]/70">A light-coloured version. Without it the footer shows the name in gold.</span>
+          </div>
+        </div>
+        <div>
+          <span className="mb-2 block text-[13px] text-[var(--dim)]">Preview</span>
+          <div className="grid gap-3 md:grid-cols-2">{preview(logo, false)}{preview(logoDark, true)}</div>
+        </div>
+      </div>
+      <div className="mt-5 flex items-center gap-3">
+        <button className="pill pill-gold disabled:opacity-50" disabled={!dirty || saving} onClick={save}>{saving ? "Saving…" : "Save branding"}</button>
+        {dirty && <button className="chip" onClick={discard}>Discard</button>}
+      </div>
+      <p className="mt-4 text-[12px] text-[var(--dim)]">Link previews on WhatsApp/Facebook use a fixed image and title from the last deploy; they update the next time the site is published.</p>
     </div>
   );
 }

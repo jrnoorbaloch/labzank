@@ -617,7 +617,7 @@ function Footer() {
       </div>
       <div className="wrap flex flex-wrap items-center justify-between gap-4 border-t border-white/10 py-5 text-[12px] text-white/55">
         <span className="flex items-baseline gap-2">
-          <Logo className="text-[20px] text-[#e9c27a]" />
+          <Logo className="text-[20px] text-[#e9c27a]" imgClass="h-[30px]" variant="dark" />
           <span lang="en" dir="ltr" className={latin}>© 2026</span>
         </span>
         <span className="max-w-[70ch]">

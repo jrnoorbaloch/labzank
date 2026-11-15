@@ -8,7 +8,7 @@ import { detectScript } from "@/lib/dictionary/normalize";
 import { page } from "@/lib/links";
 import { supabase } from "@/lib/db/client";
 import { Duplicates, ReviewQueue, Sources, WordEditor, WordList, WotdScheduler } from "./AdminEditing";
-import { ContentManager, DictionaryVisibility, HomepageBuilder, LanguageSettings, Messages, Subscribers, TableKey } from "@/components/admin/ContentCMS";
+import { BrandingSettings, ContentManager, DictionaryVisibility, HomepageBuilder, LanguageSettings, Messages, Subscribers, TableKey } from "@/components/admin/ContentCMS";
 import type { Session } from "@supabase/supabase-js";
 
 /**
@@ -28,7 +28,7 @@ const CONTENT_MENU = [
   ["folk_items", "Folk literature"], ["audio_items", "Audio poetry"], ["hero_slides", "Hero slider"],
   ["homepage", "Homepage builder"], ["subscribers", "Newsletter"], ["messages", "Messages"],
 ] as const;
-const SITE_MENU = [["languages", "Languages"], ["dict-visibility", "Dictionary visibility"]] as const;
+const SITE_MENU = [["branding", "Branding"], ["languages", "Languages"], ["dict-visibility", "Dictionary visibility"]] as const;
 type Sec = (typeof MENU)[number][0] | (typeof CONTENT_MENU)[number][0] | (typeof SITE_MENU)[number][0] | "edit";
 const CONTENT_TABLES = ["authors", "poems", "books", "events", "folk_items", "audio_items", "hero_slides"] as const;
 const LOCAL_OK: Sec[] = ["overview", "import", "history", "wotd", "alpha"];
@@ -253,6 +253,7 @@ function AdminShell({ canImport, email, roles }: { canImport: boolean; email?: s
               {sec === "homepage" && (canContent ? <HomepageBuilder /> : <Phase2 name="Homepage (Admin or Editor role needed)" />)}
               {sec === "subscribers" && <Subscribers />}
               {sec === "messages" && <Messages />}
+              {sec === "branding" && (canSite ? <BrandingSettings /> : <Phase2 name="Branding (Admin role needed)" />)}
               {sec === "languages" && (canSite ? <LanguageSettings /> : <Phase2 name="Languages (Admin role needed)" />)}
               {sec === "dict-visibility" && (canSite ? <DictionaryVisibility /> : <Phase2 name="Dictionary visibility (Admin role needed)" />)}
             </>

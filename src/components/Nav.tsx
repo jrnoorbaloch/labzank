@@ -55,7 +55,7 @@ export default function Nav({ onHome = true, active }: { onHome?: boolean; activ
     <>
       <header className="sticky top-0 z-[80] border-b border-[var(--faint)] bg-white/95 backdrop-blur" data-nav>
         <div className="mx-auto flex h-[60px] max-w-[1400px] items-center gap-5 px-[3vw]">
-          <a href={resolve("#top", onHome)} className="flex shrink-0 items-center" aria-label="Labzaank home">
+          <a href={resolve("#top", onHome)} className="flex shrink-0 items-center" aria-label="Home">
             <Logo />
           </a>
 

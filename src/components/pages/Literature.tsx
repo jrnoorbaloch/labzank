@@ -12,6 +12,7 @@ import type { L } from "@/lib/i18n";
 import { Book, bookCats, Poem, Poet } from "@/lib/content";
 import { useContent } from "@/lib/content-store";
 import { page } from "@/lib/links";
+import { siteName } from "@/lib/branding";
 import { Cover, Medallion, ReadPdf } from "@/components/BrandSections";
 
 /* ─────────────────────────── shared ─────────────────────────── */
@@ -34,12 +35,23 @@ const flat = (v?: L | string | null) => (typeof v === "string" ? v : v ? Object.
 const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ًͯ-ٰٟ]/g, "").replace(/[يى]/g, "ی").replace(/ك/g, "ک");
 const matches = (q: string, ...parts: (L | string | null | undefined)[]) => !q.trim() || norm(parts.map(flat).join(" ")).includes(norm(q.trim()));
 
+/** Page-specific browser title. Next.js may re-apply the static title after hydration,
+ *  so keep ours while the view is mounted (and follow branding changes). */
 function useTitle(title?: string) {
   useEffect(() => {
     if (!title) return;
     const prev = document.title;
-    document.title = `${title} — Labzaank`;
-    return () => { document.title = prev; };
+    const want = () => `${title} — ${siteName()}`;
+    const apply = () => { if (document.title !== want()) document.title = want(); };
+    apply();
+    const mo = new MutationObserver(apply);
+    mo.observe(document.head, { subtree: true, childList: true, characterData: true });
+    addEventListener("labzaank:branding", apply);
+    return () => {
+      mo.disconnect();
+      removeEventListener("labzaank:branding", apply);
+      document.title = prev;
+    };
   }, [title]);
 }
 

@@ -3,6 +3,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import { dict, DictKey } from "./dict";
 import { supabase } from "./db/client";
+import { siteName } from "./branding";
 
 /**
  * Interface languages. Balochi ships in two scripts: Arabic-based (RTL) and
@@ -97,12 +98,21 @@ export function LangProvider({ children }: { children: ReactNode }) {
     requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
   }, []);
 
+  // UI strings name the site "Labzaank"; swap in the name set in Admin → Site → Branding
+  const [brand, setBrand] = useState(siteName());
+  useEffect(() => {
+    const h = () => setBrand(siteName());
+    h();
+    addEventListener("labzaank:branding", h);
+    return () => removeEventListener("labzaank:branding", h);
+  }, []);
   const t = useCallback(
     (k: DictKey) => {
       const e = dict[k];
-      return (e as Record<string, string>)[lang] ?? e.en ?? e.bal;
+      const v = (e as Record<string, string>)[lang] ?? e.en ?? e.bal;
+      return brand === "Labzaank" ? v : v.split("Labzaank").join(brand);
     },
-    [lang]
+    [lang, brand]
   );
 
   /**
