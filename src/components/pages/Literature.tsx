@@ -14,6 +14,7 @@ import { useContent } from "@/lib/content-store";
 import { page } from "@/lib/links";
 import { siteName } from "@/lib/branding";
 import { Cover, Medallion, ReadPdf } from "@/components/BrandSections";
+import { Verse } from "@/components/WordLookup";
 
 /* ─────────────────────────── shared ─────────────────────────── */
 
@@ -339,14 +340,11 @@ function PoemDetail({ p }: { p: Poem }) {
           {p.sample && <span className="text-[12px] text-[var(--dim)]">{t("ui.sample")}</span>}
         </div>
         <p className="mt-4 text-center text-[12px] uppercase tracking-[0.2em] text-[var(--dim)]">{t("pg.original")}</p>
-        <p className="nastaliq relative mx-auto mt-6 max-w-[34ch] whitespace-pre-line text-center text-[clamp(26px,3.2vw,44px)]" lang="bal" dir="rtl" style={{ lineHeight: 2.4 }} data-poem-original>
-          {p.original}
-        </p>
+        <Verse text={p.original} className="nastaliq relative mx-auto mt-6 max-w-[34ch] text-center text-[clamp(26px,3.2vw,44px)]" lang="bal" dir="rtl" style={{ lineHeight: 2.4 }} data-poem-original />
         {p.roman && (
-          <p className="mx-auto mt-8 max-w-[52ch] whitespace-pre-line text-center font-[family-name:var(--latin-display)] text-[clamp(18px,1.6vw,22px)] italic leading-relaxed text-[var(--gold)]/85" lang="bal-Latn" dir="ltr">
-            {p.roman}
-          </p>
+          <Verse text={p.roman} className="mx-auto mt-8 max-w-[52ch] text-center font-[family-name:var(--latin-display)] text-[clamp(18px,1.6vw,22px)] italic leading-relaxed text-[var(--gold)]/85" lang="bal-Latn" dir="ltr" />
         )}
+        <p className="mt-4 text-center text-[12px] text-[var(--dim)]" data-word-hint>{t("w.hint")}</p>
         <div className="mx-auto mt-12 max-w-[640px] border-t border-[var(--faint)] pt-8">
           <div className="mb-4 flex items-center justify-between gap-3">
             <span className="text-[13px] text-[var(--dim)]">{t("s.poetry.translation")}</span>

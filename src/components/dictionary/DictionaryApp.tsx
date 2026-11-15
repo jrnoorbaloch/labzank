@@ -32,7 +32,7 @@ function DbError({ msg }: { msg: string }) {
   return <p className="card my-4 p-4 text-[13px] text-[var(--rust)]" lang="en" dir="ltr">Database error: {msg}</p>;
 }
 
-const POS_LABEL: Record<Pos, { en: string; ur: string; bal: string }> = {
+export const POS_LABEL: Record<Pos, { en: string; ur: string; bal: string }> = {
   noun: { en: "noun", ur: "اسم", bal: "نام" },
   verb: { en: "verb", ur: "فعل", bal: "کار" },
   adjective: { en: "adjective", ur: "صفت", bal: "سپت" },

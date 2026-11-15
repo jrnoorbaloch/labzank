@@ -26,6 +26,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 import Logo from "./Logo";
+import { Verse } from "./WordLookup";
 
 /* ─────────────────────────── shared pieces ─────────────────────────── */
 
@@ -195,13 +196,9 @@ function TopPoetry() {
         <Arrow dir="prev" onClick={() => setI((x) => (x - 1 + list.length) % list.length)} label="Previous" />
         <div className="flex-1 text-center" data-top-poem={p.id}>
           {showRoman && p.roman ? (
-            <p className="whitespace-pre-line font-[family-name:var(--latin-display)] text-[clamp(19px,1.8vw,25px)] italic leading-[1.9] text-[var(--text)]/85" lang="bal-Latn" dir="ltr">
-              {roman.join("\n")}
-            </p>
+            <Verse text={roman.join("\n")} className="font-[family-name:var(--latin-display)] text-[clamp(19px,1.8vw,25px)] italic leading-[1.9] text-[var(--text)]/85" lang="bal-Latn" dir="ltr" />
           ) : null}
-          <p className={`nastaliq whitespace-pre-line text-[clamp(20px,2vw,28px)] text-[var(--text)] ${showRoman && p.roman ? "mt-2 text-[var(--dim)]" : ""}`} lang="bal" dir="rtl" style={{ lineHeight: 2.3 }}>
-            {lines.join("\n")}
-          </p>
+          <Verse text={lines.join("\n")} className={`nastaliq text-[clamp(20px,2vw,28px)] text-[var(--text)] ${showRoman && p.roman ? "mt-2 text-[var(--dim)]" : ""}`} lang="bal" dir="rtl" style={{ lineHeight: 2.3 }} />
           <a href={poet ? page("poets", poet.slug) : page("poetry", p.id)} className="poet-name mt-3 inline-block text-[12px] uppercase tracking-[0.1em] text-[var(--text)] hover:text-[var(--gold)] rtl:text-[15px] rtl:normal-case rtl:tracking-normal">
             <Tx v={poet?.name ?? p.contributor} />
           </a>
@@ -385,13 +382,9 @@ function TodaysSpecial() {
         {verse && (
           <>
             <span className="mt-6 block h-px w-16 bg-[var(--gold)]/50" />
-            <p className="nastaliq mt-5 whitespace-pre-line text-[20px] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }}>
-              {verse.original.split("\n").slice(0, 2).join("\n")}
-            </p>
+            <Verse text={verse.original.split("\n").slice(0, 2).join("\n")} className="nastaliq mt-5 text-[20px] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }} />
             {verse.roman && (
-              <p className="mt-2 whitespace-pre-line text-[17px] italic leading-relaxed text-[var(--text)]" lang="bal-Latn" dir="ltr">
-                {verse.roman.split("\n").slice(0, 2).join("\n")}
-              </p>
+              <Verse text={verse.roman.split("\n").slice(0, 2).join("\n")} className="mt-2 text-[17px] italic leading-relaxed text-[var(--text)]" lang="bal-Latn" dir="ltr" />
             )}
           </>
         )}

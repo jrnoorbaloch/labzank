@@ -173,3 +173,9 @@ html[dir="rtl"] .sec-link { font-family: var(--arabic-body); letter-spacing: 0; 
 @keyframes hs-twinkle { 0%, 100% { opacity: .85; } 50% { opacity: .12; } }
 .hs-twinkle { animation: hs-twinkle 3.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .hs-twinkle { animation: none; } }
+
+/* click-a-word glossary */
+.lafz { display: inline; padding: 0; margin: 0; border: 0; background: none; font: inherit; color: inherit; line-height: inherit; cursor: pointer; border-radius: 3px; transition: background-color .15s, color .15s; }
+.lafz:hover { background: rgba(168,116,26,.12); }
+.lafz.on { background: rgba(168,116,26,.2); color: var(--gold-bright); }
+.lafz:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }

@@ -48,6 +48,42 @@ async function rpcList(fn: string, args: Record<string, unknown>): Promise<Entry
   return ((data ?? []) as Entry[]).filter(Boolean);
 }
 
+/* ── word lookup (click a word in a poem) ── */
+
+// common Balochi endings, tried after the exact form; the result must still
+// match a headword exactly, so stripping never invents a meaning
+const ARAB_SUFFIXES = ["انی", "اں", "ان", "یں", "ی", "ا"];
+const LATN_SUFFIXES = ["ani", "ana", "an", "ay", "e", "a"];
+const lookupCache = new Map<string, Promise<Entry | null>>();
+
+function stems(n: string, arab: boolean): string[] {
+  const out = [n];
+  for (const suf of arab ? ARAB_SUFFIXES : LATN_SUFFIXES) {
+    if (n.length - suf.length >= 2 && n.endsWith(suf)) out.push(n.slice(0, -suf.length));
+  }
+  return [...new Set(out)];
+}
+
+/** clean one token from a verse: drop punctuation, keep letters */
+export function cleanToken(w: string): string {
+  return w.replace(/[\s.,;:!?؟،؛۔"“”«»()\[\]{}\-–—…'’ʼ`*_]+/g, " ").trim().split(" ")[0] ?? "";
+}
+
+async function lookupUncached(word: string): Promise<Entry | null> {
+  const sc = detectScript(word);
+  if (sc !== "arab" && sc !== "latn") return null;
+  const arab = sc === "arab";
+  const n = arab ? normArab(word) : normLatn(word);
+  if (!n) return null;
+  const head = (e: Entry) => (arab ? normArab(e.arab) : normLatn(e.latn));
+  for (const stem of stems(n, arab)) {
+    const hits = supabase ? await rpcList("dict_search", { q: stem, lim: 20, p_pos: null }) : localSearch(stem);
+    const hit = hits.find((e) => head(e) === stem);
+    if (hit) return hit;
+  }
+  return null;
+}
+
 /* ── public API ── */
 
 export const repo = {
@@ -96,6 +132,19 @@ export const repo = {
   async popular(lim = 6): Promise<Entry[]> {
     if (!supabase) return popularSlugs.map(localBySlug).filter(Boolean).slice(0, lim) as Entry[];
     return rpcList("dict_popular", { lim });
+  },
+
+  /** exact headword for a word clicked in a poem (with a few suffixes stripped), or null */
+  lookup(word: string): Promise<Entry | null> {
+    const w = cleanToken(word);
+    if (!w) return Promise.resolve(null);
+    const key = w.toLowerCase();
+    let p = lookupCache.get(key);
+    if (!p) {
+      p = lookupUncached(w).catch(() => null);
+      lookupCache.set(key, p);
+    }
+    return p;
   },
 
   async wordOfDay(): Promise<Entry | null> {
