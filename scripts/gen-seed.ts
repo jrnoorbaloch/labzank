@@ -36,7 +36,7 @@ heroSlides.forEach((h, i) =>
 out.push("");
 // Rekhta-style default order; manifesto, stats and cta start hidden (switch on in Admin → Homepage builder)
 SECTION_KEYS.forEach((k, i) =>
-  out.push(`insert into public.homepage_sections (key, enabled, sort) values (${q(k)}, ${DEFAULT_SECTIONS.includes(k)}, ${(i + 1) * 10});`)
+  out.push(`insert into public.homepage_sections (key, enabled, sort) values (${q(k)}, ${DEFAULT_SECTIONS.includes(k)}, ${(i + 1) * 10}) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;`)
 );
 
 /* ── dictionary ── */

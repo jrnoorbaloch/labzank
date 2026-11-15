@@ -17,6 +17,8 @@ import { page } from "@/lib/links";
 import { bookPdfUrl } from "@/lib/media";
 import { openSearch } from "./search";
 import HistorySky from "./HistorySky";
+import { ArticleCard, VideoCard, VideoModal } from "./pages/Extra";
+import type { Video } from "@/lib/content";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -287,6 +289,25 @@ function Recent() {
   );
 }
 
+/* ─────────────────────────── 2b. videos ─────────────────────────── */
+
+function Videos() {
+  const { videos } = useContent();
+  const { t } = useLang();
+  const [play, setPlay] = useState<Video | null>(null);
+  if (!videos.length) return null;
+  return (
+    <Section id="videos">
+      <Title sub={t("vid.sub")}>{t("vid.h")}</Title>
+      <Rail itemClass="w-[78%] sm:w-[46%] lg:w-[31.5%]">
+        {videos.map((v) => <VideoCard key={v.id} v={v} onPlay={() => setPlay(v)} />)}
+      </Rail>
+      <a href={page("media")} className="sec-link">{t("media.h")}</a>
+      <VideoModal v={play} onClose={() => setPlay(null)} />
+    </Section>
+  );
+}
+
 /* ─────────────────────────── 3. word of the day ─────────────────────────── */
 
 function WordOfDay() {
@@ -436,6 +457,25 @@ function Library() {
   );
 }
 
+/* ─────────────────────────── 7b. blog ─────────────────────────── */
+
+function Blog() {
+  const { articles } = useContent();
+  const { t } = useLang();
+  if (!articles.length) return null;
+  const [first, ...rest] = articles;
+  return (
+    <Section id="articles">
+      <Title sub={t("art.sub")}>{t("art.blog")}</Title>
+      <div className="grid gap-6 md:grid-cols-2">
+        <div data-anim><ArticleCard a={first} /></div>
+        <div className="grid gap-6">{rest.slice(0, 2).map((a) => <div key={a.slug} data-anim><ArticleCard a={a} /></div>)}</div>
+      </div>
+      <a href={page("articles")} className="sec-link">{t("art.all")}</a>
+    </Section>
+  );
+}
+
 /* ─────────────────────────── 8. news & events ─────────────────────────── */
 
 function Events() {
@@ -557,7 +597,7 @@ function Newsletter() {
 
 /* ─────────────────────────── footer ─────────────────────────── */
 
-function ContactForm() {
+export function ContactForm({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const { t } = useLang();
   const [f, setF] = useState({ name: "", email: "", message: "" });
   const [state, setState] = useState<"idle" | "busy" | "done">("idle");
@@ -575,8 +615,8 @@ function ContactForm() {
     }
     setState("done");
   };
-  const field = "w-full rounded bg-white px-3 py-2 text-[13px] text-[var(--text)] outline-none";
-  if (state === "done") return <p className="text-[14px] text-[#e9c27a]" data-contact-done>{t("f.sent")}</p>;
+  const field = `w-full rounded bg-white px-3 py-2 text-[var(--text)] outline-none ${tone === "light" ? "border border-[var(--faint)] text-[15px] focus:border-[var(--gold)]/60" : "text-[13px]"}`;
+  if (state === "done") return <p className={`text-[14px] ${tone === "light" ? "text-[var(--gold)]" : "text-[#e9c27a]"}`} data-contact-done>{t("f.sent")}</p>;
   return (
     <form onSubmit={submit} className="flex flex-col gap-2" data-contact>
       <input required maxLength={200} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder={t("f.name")} className={field} />
@@ -594,8 +634,8 @@ function Footer() {
   const { t } = useLang();
   const cols: [string, [string, string][]][] = [
     [t("f.quick"), [[t("nav.poets"), page("poets")], [t("nav.poetry"), page("poetry")], [t("nav.dictionary"), page("dictionary")], [t("nav.books"), page("library")]]],
-    [t("f.site"), [[t("nav.about"), "#story"], [t("nav.contact"), "#contact"], [t("nav.articles"), "#events"], [t("f.admin"), page("admin")]]],
-    [t("f.explore"), [[t("nav.media"), "#audio"], [t("nav.culture"), "#folk"], [t("d.wotd"), "#dictionary"], [t("nav.search"), "#search"]]],
+    [t("f.site"), [[t("nav.about"), page("about")], [t("nav.contact"), page("contact")], [t("nav.privacy"), page("privacy")], [t("nav.terms"), page("terms")], [t("f.admin"), page("admin")]]],
+    [t("f.explore"), [[t("nav.articles"), page("articles")], [t("nav.media"), page("media")], [t("nav.culture"), "#folk"], [t("d.wotd"), "#dictionary"], [t("nav.search"), "#search"]]],
   ];
   return (
     <footer id="footer" className="bg-[var(--band)] text-white/80">
@@ -639,7 +679,7 @@ function Footer() {
 /* ─────────────────────────── assembly ─────────────────────────── */
 
 const SECTIONS: Record<SectionKey, () => ReactNode> = {
-  poetry: TopPoetry, audio: Recent, dictionary: WordOfDay, potd: TodaysSpecial, history: HistorySky, poets: RecommendedPoets,
+  poetry: TopPoetry, audio: Recent, videos: Videos, articles: Blog, dictionary: WordOfDay, potd: TodaysSpecial, history: HistorySky, poets: RecommendedPoets,
   stats: Stats, library: Library, events: Events, folk: Folk, manifesto: Manifesto, newsletter: Newsletter, cta: ClosingCta,
 };
 

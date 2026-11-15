@@ -13,14 +13,16 @@ const PRIMARY: { k: DictKey; href: string }[] = [
   { k: "nav.poetry", href: "@poetry" },
   { k: "nav.dictionary", href: "@dictionary" },
   { k: "nav.books", href: "@library" },
-  { k: "nav.media", href: "#audio" },
+  { k: "nav.media", href: "@media" },
   { k: "nav.culture", href: "#folk" },
-  { k: "nav.articles", href: "#events" },
+  { k: "nav.articles", href: "@articles" },
 ];
 const MORE: { k: DictKey; href: string }[] = [
   { k: "nav.prose", href: "@library" },
-  { k: "nav.about", href: "#footer" },
-  { k: "nav.contact", href: "#contact" },
+  { k: "nav.about", href: "@about" },
+  { k: "nav.contact", href: "@contact" },
+  { k: "nav.privacy", href: "@privacy" },
+  { k: "nav.terms", href: "@terms" },
 ];
 
 const SHORT: Record<string, string> = { en: "ENG", bal: "بلوچی", "bal-latn": "BAL", ur: "اردو" };

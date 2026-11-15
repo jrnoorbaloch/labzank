@@ -43,19 +43,21 @@ insert into public.hero_slides (heading, description, cta, sort) values ('{"bal"
 insert into public.hero_slides (heading, description, cta, sort) values ('{"bal":"بلوچی کتابانی کتابجاہ","bal-latn":"Balòchi ketábáni ketábjáh","en":"A library of Balochi books","ur":"بلوچی کتابوں کا کتب خانہ"}'::jsonb, '{"bal":"شاعری، تاریخ، زبان ءُ دود — اجازت ءِ همراہ آنلائن وانگ.","bal-latn":"Shá''eri, tárikh, zabán o dód — ejázat é hamráh online wánag.","en":"Poetry, history, language and culture — read online where the rights allow.","ur":"شاعری، تاریخ، زبان اور ثقافت — جہاں اجازت ہو وہاں آن لائن پڑھیں۔"}'::jsonb, '[{"label":{"bal":"کتابجاہ ءَ بچار","bal-latn":"Ketábjáhá bechár","en":"Browse the library","ur":"کتب خانہ دیکھیں"},"href":"@library"}]'::jsonb, 2);
 insert into public.hero_slides (heading, description, cta, sort) values ('{"bal":"دودی لبزانک ءُ میراث","bal-latn":"Dódi labzánk o mirás","en":"Folk literature & heritage","ur":"لوک ادب اور ورثہ"}'::jsonb, '{"bal":"شیر، داستان، گیدی ءُ لیکو — مردمانی زبان ءِ گنج.","bal-latn":"Shér, dástán, gidi o léko — mardománi zabán é ganj.","en":"Ballads, epics and songs carried by the people of Balochistan.","ur":"بلوچستان کے لوگوں کی زبان پر زندہ گیت، داستانیں اور نغمے۔"}'::jsonb, '[{"label":{"bal":"گیشتر بزان","bal-latn":"Géshtar bezán","en":"Explore heritage","ur":"مزید جانیں"},"href":"#folk"}]'::jsonb, 3);
 
-insert into public.homepage_sections (key, enabled, sort) values ('poetry', true, 10);
-insert into public.homepage_sections (key, enabled, sort) values ('audio', true, 20);
-insert into public.homepage_sections (key, enabled, sort) values ('dictionary', true, 30);
-insert into public.homepage_sections (key, enabled, sort) values ('potd', true, 40);
-insert into public.homepage_sections (key, enabled, sort) values ('history', true, 50);
-insert into public.homepage_sections (key, enabled, sort) values ('poets', true, 60);
-insert into public.homepage_sections (key, enabled, sort) values ('stats', false, 70);
-insert into public.homepage_sections (key, enabled, sort) values ('library', true, 80);
-insert into public.homepage_sections (key, enabled, sort) values ('events', true, 90);
-insert into public.homepage_sections (key, enabled, sort) values ('folk', true, 100);
-insert into public.homepage_sections (key, enabled, sort) values ('manifesto', false, 110);
-insert into public.homepage_sections (key, enabled, sort) values ('newsletter', true, 120);
-insert into public.homepage_sections (key, enabled, sort) values ('cta', false, 130);
+insert into public.homepage_sections (key, enabled, sort) values ('poetry', true, 10) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('audio', true, 20) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('videos', true, 30) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('dictionary', true, 40) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('potd', true, 50) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('history', true, 60) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('poets', true, 70) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('stats', false, 80) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('library', true, 90) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('articles', true, 100) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('events', true, 110) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('folk', true, 120) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('manifesto', false, 130) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('newsletter', true, 140) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
+insert into public.homepage_sections (key, enabled, sort) values ('cta', false, 150) on conflict (key) do update set enabled = excluded.enabled, sort = excluded.sort;
 
 -- dictionary: 30 ORIGINAL sample entries, status draft (not Labzganj data)
 insert into public.dict_sources (id, name, licence, attribution, url) values ('labzank-editorial', 'Labzaank editorial (sample)', 'CC BY-SA 4.0 (proposed)', 'Labzaank editors — draft, not yet verified', null);

@@ -24,6 +24,8 @@ export type Content = {
   folk: typeof local.folk;
   audio: typeof local.audio;
   heroSlides: typeof local.heroSlides;
+  articles: local.Article[];
+  videos: local.Video[];
   stats: typeof local.stats;
   sections: SectionKey[];
   live: boolean;
@@ -40,6 +42,8 @@ const initial: Content = {
   folk: local.folk,
   audio: local.audio,
   heroSlides: local.heroSlides,
+  articles: local.articles,
+  videos: local.videos,
   stats: local.stats,
   sections: [...DEFAULT_SECTIONS],
   live: false,
@@ -83,11 +87,25 @@ async function load(): Promise<Partial<Content>> {
   ]);
   const err = [a, p, b, e, f, au, h, s, st].find((r) => r.error)?.error;
   if (err) throw err;
+  // newer modules: a missing table (migration not applied yet) must not break the page
+  const [ar, vi] = await Promise.all([
+    db.from("articles").select("slug, title, excerpt, cover_path, category, tags, author_id, author_text, published_at").eq("status", "published").order("published_at", { ascending: false }).limit(60),
+    pub("videos"),
+  ]);
   const rows = (r: { data: unknown }) => (r.data ?? []) as Row[];
   const out: Partial<Content> = { live: true };
   // keep sample content for any table that is still empty
   if (rows(a).length) out.poets = rows(a).map(mapPoet);
   const ids: Slugs = new Map(rows(a).map((r) => [r.id as number, r.slug as string]));
+  if (!ar.error) out.articles = rows(ar).map((r) => ({
+    slug: r.slug as string, title: r.title as L, excerpt: (r.excerpt as L) ?? { bal: "" }, category: (r.category as string) ?? "news",
+    tags: (r.tags as string[]) ?? [], cover: mediaUrl("images", r.cover_path as string), authorSlug: ids.get(r.author_id as number),
+    authorText: (r.author_text as L) ?? undefined, date: (r.published_at as string) ?? undefined,
+  }));
+  if (!vi.error) out.videos = rows(vi).map((r) => ({
+    id: String(r.id), title: r.title as L, description: (r.description as L) ?? { bal: "" }, url: r.url as string,
+    thumb: mediaUrl("images", r.thumbnail_path as string), duration: (r.duration as string) ?? undefined, authorSlug: ids.get(r.author_id as number),
+  }));
   if (rows(p).length) out.poems = rows(p).map((r) => mapPoem(r, ids));
   if (rows(b).length) out.books = rows(b).map((r) => mapBook(r, ids));
   if (rows(e).length) out.events = rows(e).map((r) => ({ day: r.day as string, month: r.month as L, title: r.title as L, place: (r.place as L) ?? { bal: "" } }));

@@ -17,7 +17,7 @@ import { Cover, Medallion, ReadPdf } from "@/components/BrandSections";
 
 /* ─────────────────────────── shared ─────────────────────────── */
 
-function useHash() {
+export function useHash() {
   const [h, setH] = useState<string | null>(null);
   useEffect(() => {
     const f = () => {
@@ -37,7 +37,7 @@ const matches = (q: string, ...parts: (L | string | null | undefined)[]) => !q.t
 
 /** Page-specific browser title. Next.js may re-apply the static title after hydration,
  *  so keep ours while the view is mounted (and follow branding changes). */
-function useTitle(title?: string) {
+export function useTitle(title?: string) {
   useEffect(() => {
     if (!title) return;
     const prev = document.title;
@@ -55,7 +55,7 @@ function useTitle(title?: string) {
   }, [title]);
 }
 
-function Shell({ kicker, title, children, tools }: { kicker?: string; title: ReactNode; children: ReactNode; tools?: ReactNode }) {
+export function Shell({ kicker, title, children, tools }: { kicker?: string; title: ReactNode; children: ReactNode; tools?: ReactNode }) {
   return (
     <div className="section pt-12">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
@@ -70,7 +70,7 @@ function Shell({ kicker, title, children, tools }: { kicker?: string; title: Rea
   );
 }
 
-function SearchBox({ q, setQ }: { q: string; setQ: (s: string) => void }) {
+export function SearchBox({ q, setQ }: { q: string; setQ: (s: string) => void }) {
   const { t } = useLang();
   return (
     <input
@@ -83,7 +83,7 @@ function SearchBox({ q, setQ }: { q: string; setQ: (s: string) => void }) {
   );
 }
 
-function Back({ href, label }: { href: string; label: string }) {
+export function Back({ href, label }: { href: string; label: string }) {
   return (
     <a href={href} className="mb-8 inline-flex items-center gap-2 text-[14px] text-[var(--dim)] hover:text-[var(--text)]">
       <span className="rtl:rotate-180">←</span> {label}
@@ -91,16 +91,16 @@ function Back({ href, label }: { href: string; label: string }) {
   );
 }
 
-function Status({ k }: { k: "pg.loading" | "pg.notFound" | "pg.empty" }) {
+export function Status({ k }: { k: "pg.loading" | "pg.notFound" | "pg.empty" | "vid.empty" }) {
   const { t } = useLang();
   return <p className="py-16 text-center text-[var(--dim)]">{t(k)}</p>;
 }
 
-function Latin({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function Latin({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <span lang="en" dir="ltr" className={`font-[family-name:var(--latin-body)] ${className}`}>{children}</span>;
 }
 
-function CopyButton({ text, label }: { text: () => string; label: string }) {
+export function CopyButton({ text, label }: { text: () => string; label: string }) {
   const { t } = useLang();
   const [done, setDone] = useState(false);
   return (
@@ -117,7 +117,7 @@ function CopyButton({ text, label }: { text: () => string; label: string }) {
   );
 }
 
-function SectionTitle({ children }: { children: ReactNode }) {
+export function SectionTitle({ children }: { children: ReactNode }) {
   return <h2 className="mb-5 mt-16 border-b border-[var(--faint)] pb-3 text-[22px] text-[var(--gold-bright)]">{children}</h2>;
 }
 

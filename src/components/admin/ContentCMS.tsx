@@ -19,7 +19,7 @@ import { Bucket, LIMITS, bookPdfUrl, mediaUrl, removeMedia, uploadMedia } from "
 type Row = Record<string, any>;
 type L = { bal?: string; "bal-latn"?: string; en?: string; ur?: string };
 
-type FieldType = "text" | "textarea" | "number" | "bool" | "select" | "L" | "Ltext" | "translation" | "quote" | "palette" | "date" | "datetime" | "author" | "book" | "image" | "audio" | "pdf" | "cta";
+type FieldType = "text" | "textarea" | "number" | "bool" | "select" | "L" | "Ltext" | "translation" | "quote" | "palette" | "date" | "datetime" | "author" | "book" | "image" | "audio" | "pdf" | "cta" | "Lmd" | "tags";
 type Field = { key: string; label: string; type: FieldType; required?: boolean; options?: string[]; hint?: string; dir?: "rtl" | "ltr"; wide?: boolean };
 
 const MEDIA_BUCKET: Partial<Record<FieldType, Bucket>> = { image: "images", audio: "audio", pdf: "books" };
@@ -27,9 +27,55 @@ const STATUS: Field = { key: "status", label: "Status", type: "select", options:
 const SORT: Field = { key: "sort", label: "Order", type: "number", hint: "Lower numbers show first." };
 const BOOK_CATS = ["poetry", "literature", "history", "culture", "linguistics", "research", "fiction", "novels", "short-stories", "biography", "folk", "religious", "dictionary", "educational"];
 
-export type TableKey = "authors" | "poems" | "books" | "events" | "folk_items" | "audio_items" | "hero_slides";
+export type TableKey = "authors" | "poems" | "books" | "events" | "folk_items" | "audio_items" | "hero_slides" | "articles" | "videos" | "pages";
 
-export const TABLES: Record<TableKey, { title: string; singular: string; titleField: string; fields: Field[]; defaults: Row; hasStatus: boolean; note?: string }> = {
+const MD_HINT = "Markdown: ## Heading, **bold**, *italic*, [link](https://…), - list, > quote. Write each language you have; empty ones fall back to another language.";
+const ARTICLE_CATS = ["news", "essay", "criticism", "history", "interview", "language"];
+
+export const TABLES: Record<TableKey, { title: string; singular: string; titleField: string; fields: Field[]; defaults: Row; hasStatus: boolean; note?: string; order?: string }> = {
+  articles: {
+    title: "Articles / blog", singular: "article", titleField: "title", hasStatus: true, order: "published_at",
+    note: "Articles appear on the blog page and the homepage once published, newest first.",
+    defaults: { category: "news", tags: [], sort: 0, status: "draft" },
+    fields: [
+      { key: "title", label: "Title", type: "L", required: true, wide: true },
+      { key: "slug", label: "URL slug", type: "text", required: true },
+      { key: "category", label: "Category", type: "select", options: ARTICLE_CATS },
+      { key: "excerpt", label: "Summary (shown on cards)", type: "Ltext", wide: true },
+      { key: "body", label: "Article text", type: "Lmd", wide: true, hint: MD_HINT },
+      { key: "cover_path", label: "Cover image", type: "image", hint: "Wide image, about 1600 × 900." },
+      { key: "author_id", label: "Author (listed poet / writer)", type: "author" },
+      { key: "author_text", label: "Author credit (if not listed)", type: "L", wide: true },
+      { key: "tags", label: "Tags", type: "tags", hint: "Comma separated, e.g. poetry, history" },
+      { key: "published_at", label: "Publish date", type: "datetime", hint: "Filled in automatically when first published." },
+      STATUS,
+    ],
+  },
+  videos: {
+    title: "Videos", singular: "video", titleField: "title", hasStatus: true,
+    note: "Paste a YouTube or Vimeo link (or a direct .mp4 link). YouTube plays in privacy-enhanced mode; its thumbnail is used unless you upload one.",
+    defaults: { sort: 0, status: "draft" },
+    fields: [
+      { key: "title", label: "Title", type: "L", required: true, wide: true },
+      { key: "url", label: "Video link", type: "text", required: true, wide: true, hint: "https://www.youtube.com/watch?v=… · https://youtu.be/… · https://vimeo.com/…", dir: "ltr" },
+      { key: "description", label: "Short description", type: "Ltext", wide: true },
+      { key: "thumbnail_path", label: "Thumbnail (optional)", type: "image" },
+      { key: "author_id", label: "Poet", type: "author" },
+      { key: "duration", label: "Duration", type: "text", hint: "e.g. 12:40" },
+      SORT, STATUS,
+    ],
+  },
+  pages: {
+    title: "Pages", singular: "page", titleField: "title", hasStatus: true, order: "slug",
+    note: "Static pages: about, privacy, terms. They open at about.html, privacy.html, terms.html. A new slug is saved but needs a link and a page route to be reachable.",
+    defaults: { status: "draft" },
+    fields: [
+      { key: "title", label: "Title", type: "L", required: true, wide: true },
+      { key: "slug", label: "Slug", type: "text", required: true, hint: "about, privacy or terms" },
+      { key: "body", label: "Page text", type: "Lmd", wide: true, hint: MD_HINT },
+      STATUS,
+    ],
+  },
   authors: {
     title: "Poets & authors", singular: "poet", titleField: "name", hasStatus: true,
     defaults: { period: "modern", works: 0, hue: 30, featured: false, sort: 0, status: "draft" },
@@ -154,7 +200,7 @@ function StatusPill({ s }: { s: string }) {
 
 /* ─────────────────────────── field editors ─────────────────────────── */
 
-function LInput({ value, onChange, multiline, required }: { value: L; onChange: (v: L) => void; multiline?: boolean; required?: boolean }) {
+function LInput({ value, onChange, multiline, required, rows = 3 }: { value: L; onChange: (v: L) => void; multiline?: boolean; required?: boolean; rows?: number }) {
   return (
     <div className="grid gap-2 md:grid-cols-2">
       {LLANGS.map(([k, label, dir]) => {
@@ -165,7 +211,7 @@ function LInput({ value, onChange, multiline, required }: { value: L; onChange: 
           placeholder: label + (k === "bal" && required ? " *" : ""),
           className: `${inputCls} ${dir === "rtl" ? "text-[17px]" : ""}`,
         };
-        return multiline ? <textarea key={k} rows={3} {...props} /> : <input key={k} {...props} />;
+        return multiline ? <textarea key={k} rows={rows} {...props} /> : <input key={k} {...props} />;
       })}
     </div>
   );
@@ -224,6 +270,8 @@ function FieldEditor({ f, value, set, authors, books, table, onUploaded, setOthe
     case "date": return <input type="date" value={(value as string) ?? ""} onChange={(e) => set(e.target.value || null)} className={inputCls} />;
     case "datetime": return <input type="datetime-local" value={value ? String(value).slice(0, 16) : ""} onChange={(e) => set(e.target.value ? new Date(e.target.value).toISOString() : null)} className={inputCls} />;
     case "L": return <LInput value={(value as L) ?? {}} onChange={set} required={f.required} />;
+    case "Lmd": return <LInput value={(value as L) ?? {}} onChange={set} multiline rows={14} />;
+    case "tags": return <input value={((value as string[]) ?? []).join(", ")} onChange={(e) => set(e.target.value.split(",").map((x) => x.trimStart()))} placeholder="poetry, history" className={inputCls} dir="ltr" />;
     case "Ltext": return <LInput value={(value as L) ?? {}} onChange={set} multiline required={f.required} />;
     case "translation": {
       const v = (value as { en?: string; ur?: string }) ?? {};
@@ -305,7 +353,8 @@ export function ContentManager({ table }: { table: TableKey }) {
 
   const refresh = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase!.from(table).select("*").order("sort").order("id");
+    const ord = cfg.order ?? "sort";
+    const { data, error } = await supabase!.from(table).select("*").order(ord, { ascending: ord !== "published_at", nullsFirst: true }).order("id");
     setLoading(false);
     if (error) return toast(error.message);
     setRows(data ?? []);
@@ -348,7 +397,8 @@ export function ContentManager({ table }: { table: TableKey }) {
     const out: Row = {};
     for (const f of cfg.fields) {
       let v = edit[f.key];
-      if (f.type === "L" || f.type === "Ltext") v = Object.keys(cleanL(v)).length ? cleanL(v) : null;
+      if (f.type === "L" || f.type === "Ltext" || f.type === "Lmd") v = Object.keys(cleanL(v)).length ? cleanL(v) : null;
+      if (f.type === "tags") v = [...new Set(((v as string[]) ?? []).map((x) => x.trim().toLowerCase()).filter(Boolean))];
       if (f.type === "translation") v = cleanL(v ?? {});
       if (f.type === "quote") v = v?.text ? { text: v.text, roman: v.roman ?? "", credit: cleanL(v.credit ?? {}) } : null;
       if (f.type === "cta") {
@@ -361,7 +411,9 @@ export function ContentManager({ table }: { table: TableKey }) {
       out[f.key] = v ?? null;
     }
     if (table === "authors") out.updated_at = new Date().toISOString();
-    if (table === "poems" && out.status === "published" && !edit.published_at) out.published_at = new Date().toISOString();
+    if (table === "videos" && !/^https:\/\//i.test(String(out.url ?? ""))) return toast("The video link must start with https://");
+    if ((table === "poems" || table === "articles") && out.status === "published" && !out.published_at) out.published_at = new Date().toISOString();
+    if (table === "articles" || table === "pages") out.updated_at = new Date().toISOString();
     setSaving(true);
     const { error } = edit.id ? await supabase!.from(table).update(out).eq("id", edit.id) : await supabase!.from(table).insert(out);
     setSaving(false);
@@ -442,7 +494,7 @@ export function ContentManager({ table }: { table: TableKey }) {
               <span lang="bal" dir="rtl" className="me-3 text-[18px]">{pickL(r[cfg.titleField])}</span>
               <span className="text-[13px] text-[var(--dim)]">{typeof r[cfg.titleField] === "object" ? r[cfg.titleField]?.en ?? "" : r.slug}</span>
             </button>
-            <span className="w-12 text-center text-[12px] text-[var(--dim)]">#{r.sort}</span>
+            <span className="w-16 truncate text-center text-[12px] text-[var(--dim)]" dir="ltr">{r.sort !== undefined ? `#${r.sort}` : r.slug}</span>
             {cfg.hasStatus ? (
               <span className="flex items-center gap-2">
                 <StatusPill s={r.status} />
@@ -462,7 +514,7 @@ export function ContentManager({ table }: { table: TableKey }) {
 /* ─────────────────────────── homepage builder ─────────────────────────── */
 
 const SECTION_LABELS: Record<string, string> = {
-  manifesto: "Manifesto", potd: "Today's special (poet of the day)", history: "A sky of voices (history constellation)", poetry: "Today's top poetry", dictionary: "Word of the Day",
+  manifesto: "Manifesto", videos: "Videos rail", articles: "Labzaank blog", potd: "Today's special (poet of the day)", history: "A sky of voices (history constellation)", poetry: "Today's top poetry", dictionary: "Word of the Day",
   stats: "Archive numbers", poets: "Recommended poets", library: "From the library", folk: "More from Labzaank (folk)", audio: "Labzaank recent (audio)",
   events: "News & events", newsletter: "Newsletter band", cta: "Closing call to action",
 };

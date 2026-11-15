@@ -412,3 +412,59 @@ export const heroSlides: HeroSlide[] = [
 ];
 
 export const stats = { poets: 1240, poems: 38600, books: 4100, audio: 920 };
+
+/** articles row (list shape; the body is loaded on the article page) */
+export type Article = {
+  slug: string;
+  title: L;
+  excerpt: L;
+  category: string;
+  tags: string[];
+  cover?: string;
+  authorSlug?: string;
+  authorText?: L;
+  date?: string; // ISO
+  body?: Partial<L>; // only present for local sample content
+};
+
+/** videos row */
+export type Video = {
+  id: string;
+  title: L;
+  description: L;
+  url: string;
+  thumb?: string;
+  duration?: string;
+  authorSlug?: string;
+};
+
+export const articleCats: { id: string; label: L }[] = [
+  { id: "news", label: { bal: "نوکیں ہال", "bal-latn": "Nókén hál", en: "News", ur: "خبریں" } },
+  { id: "essay", label: { bal: "نبشتانک", "bal-latn": "Nebeshtánk", en: "Essays", ur: "مضامین" } },
+  { id: "criticism", label: { bal: "تنقید", "bal-latn": "Tanqíd", en: "Criticism", ur: "تنقید" } },
+  { id: "history", label: { bal: "تاریخ", "bal-latn": "Tárikh", en: "History", ur: "تاریخ" } },
+  { id: "interview", label: { bal: "گپ ءُ تران", "bal-latn": "Gap o trán", en: "Interviews", ur: "انٹرویو" } },
+  { id: "language", label: { bal: "زبان", "bal-latn": "Zabán", en: "Language", ur: "زبان" } },
+];
+
+/** sample shown only without a database */
+export const articles: Article[] = [
+  {
+    slug: "welcome-to-labzaank",
+    title: { bal: "لبزانک ءَ وش آتکے", "bal-latn": "Labzaanká wash átké", en: "Welcome to Labzaank", ur: "لبزانک میں خوش آمدید" },
+    excerpt: {
+      bal: "بلوچی لبزانک ءِ نوکیں ڈیجیٹل لوگ — شعر، کتاب، توار ءُ لبزبلد.",
+      en: "A new digital home for Balochi literature — poetry, books, recordings and a dictionary.",
+      ur: "بلوچی ادب کا نیا ڈیجیٹل گھر — شاعری، کتابیں، آوازیں اور لغت۔",
+    },
+    category: "news",
+    tags: ["labzaank"],
+    date: "2026-11-15T00:00:00Z",
+    body: {
+      en: "Labzaank brings Balochi literature together in one place: classical and modern poetry in the original script, profiles of poets, a growing library, folk literature, recordings and a Balochi dictionary.\n\n## Read it your way\n\nEvery page works in Balochi (Arabic script), English and Urdu.",
+      ur: "لبزانک بلوچی ادب کو ایک جگہ جمع کرتا ہے: اصل رسم الخط میں شاعری، شعرا کے تعارف، کتب خانہ، لوک ادب، آوازیں اور بلوچی لغت۔",
+    },
+  },
+];
+
+export const videos: Video[] = [];

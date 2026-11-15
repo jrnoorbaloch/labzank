@@ -346,6 +346,23 @@ export const dict = {
   "hist.p": { bal: "ہر استار یک شاعرے — کوہنیں دور ءَ چہ مروچی ءَ. استار ءَ ٹک بجن ءُ آئی ءِ بارءَ بوان.", "bal-latn": "Har estár yak shá'eré — kóhnén daurá cha marochíá. Estárá tak bejan o ái é bárá bewán.", en: "Each star is a poet, from the classical age to today. Tap a star to read about them.", ur: "ہر ستارہ ایک شاعر ہے — کلاسیکی دور سے آج تک۔ ستارے پر ٹیپ کر کے ان کے بارے میں پڑھیں۔" },
   "hist.contemporary": { bal: "مروچی", "bal-latn": "Marochí", en: "Contemporary", ur: "عصرِ حاضر" },
   "hist.open": { bal: "پروفائل ءَ بچار", "bal-latn": "Profailá bechár", en: "Open profile", ur: "پروفائل دیکھیں" },
+  "art.blog": { bal: "لبزانک ءِ بلاگ", "bal-latn": "Labzaank é blog", en: "Labzaank blog", ur: "لبزانک بلاگ" },
+  "art.all": { bal: "سجّہیں نبشتانک", "bal-latn": "Sajjahén nebeshtánk", en: "All articles", ur: "تمام مضامین" },
+  "art.read": { bal: "بوان", "bal-latn": "Bewán", en: "Continue reading", ur: "مزید پڑھیں" },
+  "art.minRead": { bal: "دقیقہ وانگ", "bal-latn": "daqiqa wánag", en: "min read", ur: "منٹ کا مطالعہ" },
+  "art.related": { bal: "دگہ نبشتانک", "bal-latn": "Dega nebeshtánk", en: "More articles", ur: "مزید مضامین" },
+  "art.sub": { bal: "نبشتانک، ہال، گپ ءُ تران ءُ تحقیق", "bal-latn": "Nebeshtánk, hál, gap o trán o tahqíq", en: "Essays, news, interviews and research", ur: "مضامین، خبریں، انٹرویو اور تحقیق" },
+  "vid.h": { bal: "ویڈیو", "bal-latn": "Video", en: "Videos", ur: "ویڈیوز" },
+  "vid.sub": { bal: "بچار، شنگ کن، بزان.", "bal-latn": "Bechár, shang kan, bezán.", en: "Watch. Share. Learn.", ur: "دیکھیں۔ شیئر کریں۔ سیکھیں۔" },
+  "vid.empty": { bal: "انگت ویڈیو نیست.", "bal-latn": "Angat video nést.", en: "No videos yet.", ur: "ابھی کوئی ویڈیو نہیں۔" },
+  "vid.open": { bal: "یوٹیوب ءَ بچار", "bal-latn": "YouTube á bechár", en: "Watch on the original site", ur: "اصل سائٹ پر دیکھیں" },
+  "media.h": { bal: "توار ءُ ویڈیو", "bal-latn": "Tawár o video", en: "Audio & Video", ur: "آڈیو اور ویڈیو" },
+  "media.audio": { bal: "توار", "bal-latn": "Tawár", en: "Recordings", ur: "ریکارڈنگز" },
+  "nav.privacy": { bal: "راز داری", "bal-latn": "Ráz-dári", en: "Privacy", ur: "رازداری" },
+  "nav.terms": { bal: "شرط", "bal-latn": "Shart", en: "Terms", ur: "شرائط" },
+  "ct.h": { bal: "مارا نبشتہ کن", "bal-latn": "Márá nebeshta kan", en: "Get in touch", ur: "رابطہ کریں" },
+  "ct.p": { bal: "نبشتانک، رجانک، توار، اصلاح یا حق ءِ بارءَ — مارا کلوہ دیئے.", "bal-latn": "Nebeshtánk, rajánk, tawár, esláh yá haq é bárá — márá kolawh dayé.", en: "Texts, translations, recordings, corrections or rights questions — send us a message.", ur: "متن، ترجمہ، ریکارڈنگ، اصلاح یا حقوق کے بارے میں — ہمیں پیغام بھیجیں۔" },
+  "pg.updated": { bal: "آخری بدل", "bal-latn": "Ákheri badal", en: "Last updated", ur: "آخری تبدیلی" },
 } satisfies Record<string, E>;
 
 export type DictKey = keyof typeof dict;
