@@ -25,8 +25,8 @@
 
   --arabic-display: "Mehr Nastaliq", "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
   --arabic-body: "Mehr Nastaliq", "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
-  --latin-display: "Fraunces", Georgia, serif;
-  --latin-body: "Inter", system-ui, sans-serif;
+  --latin-display: "Merriweather Variable", Merriweather, Georgia, serif;
+  --latin-body: "Lato", system-ui, sans-serif;
 
   --display: var(--arabic-display);
   --body: var(--arabic-body);
@@ -64,6 +64,10 @@ html[dir="rtl"] .display { letter-spacing: 0; font-weight: 700; }
 .display[lang="bal"], .display[lang="ur"] { font-family: var(--arabic-display); line-height: 1.95; letter-spacing: 0; }
 .display[lang="en"], .display[lang="bal-Latn"] { font-family: var(--latin-display); line-height: 1.05; }
 .nastaliq { font-family: var(--arabic-display); line-height: 2.1; }
+/* Roman Balochi verse: Merriweather Light Italic, extended — as Rekhta sets Roman Urdu */
+/* poet names: Merriweather Heavy, as on Rekhta */
+.poet-name [lang="en"], .poet-name [lang="bal-Latn"] { font-family: var(--latin-display); font-weight: 900; }
+.italic[lang="bal-Latn"] { font-family: var(--latin-display); font-weight: 300; font-stretch: 112%; }
 
 /* resets live in the base layer so Tailwind utilities (text-*, bg-*) can override them */
 @layer base {

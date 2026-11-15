@@ -3,14 +3,17 @@ import "@fontsource/noto-nastaliq-urdu/arabic-400.css";
 import "@fontsource/noto-nastaliq-urdu/arabic-700.css";
 import "@fontsource/noto-naskh-arabic/arabic-400.css";
 import "@fontsource/noto-naskh-arabic/arabic-600.css";
-import "@fontsource/fraunces/latin-400.css";
-import "@fontsource/fraunces/latin-600.css";
-import "@fontsource/fraunces/latin-400-italic.css";
-import "@fontsource/inter/latin-400.css";
-import "@fontsource/inter/latin-500.css";
-import "@fontsource/inter/latin-ext-400.css";
-import "@fontsource/fraunces/latin-ext-400.css";
-import "@fontsource/fraunces/latin-ext-400-italic.css";
+// Latin type as on Rekhta: Lato for the interface, Merriweather for headings, names and
+// Roman verse (Light Italic at extended width). Both SIL Open Font License.
+import "@fontsource/lato/latin-300.css";
+import "@fontsource/lato/latin-400.css";
+import "@fontsource/lato/latin-400-italic.css";
+import "@fontsource/lato/latin-700.css";
+import "@fontsource/lato/latin-900.css";
+import "@fontsource/lato/latin-ext-400.css";
+import "@fontsource/lato/latin-ext-700.css";
+import "@fontsource-variable/merriweather/wght.css";
+import "@fontsource-variable/merriweather/wdth-italic.css";
 import "./globals.css";
 import { LangProvider } from "@/lib/i18n";
 import { ContentProvider } from "@/lib/content-store";

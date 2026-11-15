@@ -192,7 +192,7 @@ function TopPoetry() {
           <p className={`nastaliq whitespace-pre-line text-[clamp(20px,2vw,28px)] text-[var(--text)] ${showRoman && p.roman ? "mt-2 text-[var(--dim)]" : ""}`} lang="bal" dir="rtl" style={{ lineHeight: 2.3 }}>
             {lines.join("\n")}
           </p>
-          <a href={poet ? page("poets", poet.slug) : page("poetry", p.id)} className="mt-3 inline-block text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--text)] hover:text-[var(--gold)] rtl:text-[15px] rtl:normal-case rtl:tracking-normal">
+          <a href={poet ? page("poets", poet.slug) : page("poetry", p.id)} className="poet-name mt-3 inline-block text-[12px] uppercase tracking-[0.1em] text-[var(--text)] hover:text-[var(--gold)] rtl:text-[15px] rtl:normal-case rtl:tracking-normal">
             <Tx v={poet?.name ?? p.contributor} />
           </a>
           {p.sample && <span className="ms-2 text-[11px] text-[var(--dim)]">({t("ui.sample")})</span>}
@@ -348,7 +348,7 @@ function TodaysSpecial() {
       <Title>{t("h.special")}</Title>
       <div className="flex flex-col items-center text-center">
         <Medallion p={p} size={110} />
-        <a href={page("poets", p.slug)} className="mt-5 text-[14px] font-semibold uppercase tracking-[0.16em] hover:text-[var(--gold)] rtl:text-[20px] rtl:normal-case rtl:tracking-normal">
+        <a href={page("poets", p.slug)} className="poet-name mt-5 text-[14px] uppercase tracking-[0.12em] hover:text-[var(--gold)] rtl:text-[20px] rtl:normal-case rtl:tracking-normal">
           <Tx v={p.name} />
         </a>
         <span className={`mt-1 text-[11px] tracking-[0.2em] text-[var(--dim)] ${latin}`} dir="ltr">{p.years}</span>
