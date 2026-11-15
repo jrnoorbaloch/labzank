@@ -226,7 +226,7 @@ function PoetDetail({ p }: { p: Poet }) {
             {[
               [t("s.potd.born"), <Tx key="b" v={p.place} />],
               [t("s.potd.period"), <Latin key="y">{p.years}</Latin>],
-              [t("s.potd.works"), <Latin key="w">{p.works}</Latin>],
+              ...(p.works ? [[t("s.potd.works"), <Latin key="w">{p.works}</Latin>]] : []),
             ].map(([dt, dd], j) => (
               <div key={j}>
                 <dt className="text-[12px] text-[var(--dim)]">{dt}</dt>
@@ -277,6 +277,7 @@ export function PoetryPage() {
   const label = useLangLabel("nav.poetry");
   if (slug === null) return null;
   if (slug) {
+    if (slug.startsWith("form=")) return <PoemList initialForm={decodeURIComponent(slug.slice(5))} />;
     const p = c.poems.find((x) => x.id === slug);
     if (!p) return <Shell title=""><Back href={page("poetry")} label={label} />{c.loaded ? <Status k="pg.notFound" /> : <Status k="pg.loading" />}</Shell>;
     return <PoemDetail p={p} />;
@@ -284,11 +285,12 @@ export function PoetryPage() {
   return <PoemList />;
 }
 
-function PoemList() {
+function PoemList({ initialForm = "all" }: { initialForm?: string }) {
   const { poems, poets } = useContent();
   const { t, pick } = useLang();
   const [q, setQ] = useState("");
-  const [form, setForm] = useState("all");
+  const [form, setForm] = useState(initialForm);
+  useEffect(() => setForm(initialForm), [initialForm]);
   useTitle(t("nav.poetry"));
   const forms = useMemo(() => {
     const m = new Map<string, L>();

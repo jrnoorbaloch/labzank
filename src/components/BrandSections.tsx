@@ -17,8 +17,10 @@ import { page } from "@/lib/links";
 import { bookPdfUrl } from "@/lib/media";
 import { openSearch } from "./search";
 import HistorySky from "./HistorySky";
-import { ArticleCard, VideoCard, VideoModal } from "./pages/Extra";
-import type { Video } from "@/lib/content";
+import { useDate, VideoCard, VideoModal } from "./pages/Extra";
+import { Latin } from "./pages/Literature";
+import type { DictKey } from "@/lib/dict";
+import type { Article, Poem, Video } from "@/lib/content";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -381,11 +383,19 @@ function TodaysSpecial() {
         <span className={`mt-1 text-[11px] tracking-[0.2em] text-[var(--dim)] ${latin}`} dir="ltr">{p.years}</span>
         <Tx v={p.bio} as="p" className="mt-4 max-w-[62ch] text-[14px] leading-relaxed text-[var(--dim)]" />
         {verse && (
-          <p className="nastaliq mt-5 whitespace-pre-line text-[20px] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }}>
-            {verse.original.split("\n").slice(0, 2).join("\n")}
-          </p>
+          <>
+            <span className="mt-6 block h-px w-16 bg-[var(--gold)]/50" />
+            <p className="nastaliq mt-5 whitespace-pre-line text-[20px] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }}>
+              {verse.original.split("\n").slice(0, 2).join("\n")}
+            </p>
+            {verse.roman && (
+              <p className="mt-2 whitespace-pre-line text-[17px] italic leading-relaxed text-[var(--text)]" lang="bal-Latn" dir="ltr">
+                {verse.roman.split("\n").slice(0, 2).join("\n")}
+              </p>
+            )}
+          </>
         )}
-        <a href={page("poets", p.slug)} className="sec-link">{t("s.potd.cta")}</a>
+        <a href={verse ? page("poetry", verse.id) : page("poets", p.slug)} className="sec-link">{verse ? t("s.potd.full") : t("s.potd.cta")}</a>
       </div>
     </Section>
   );
@@ -443,12 +453,12 @@ function Library() {
   return (
     <Section id="library" band>
       <Title sub={t("h.librarySub")}>{t("h.library")}</Title>
-      <Rail itemClass="w-[40%] sm:w-[26%] lg:w-[15.5%]">
+      <Rail itemClass="w-[56%] sm:w-[34%] lg:w-[19%]">
         {books.map((b) => (
           <a key={b.id} href={page("library", b.id)} className="group block" data-book-card>
-            <div className="transition-transform duration-300 group-hover:-translate-y-1"><Cover b={b} /></div>
-            <Tx v={b.title} as="p" className="mt-3 truncate text-[14px] font-medium group-hover:text-[var(--gold)]" />
-            <Tx v={b.author} as="p" className="truncate text-[12px] text-[var(--dim)]" />
+            <div className="shadow-[0_10px_30px_-12px_rgba(0,0,0,.45)] transition-transform duration-300 group-hover:-translate-y-1.5"><Cover b={b} /></div>
+            <Tx v={b.title} as="p" className="mt-4 line-clamp-2 text-[16px] font-semibold leading-snug group-hover:text-[var(--gold)]" />
+            <Tx v={b.author} as="p" className="mt-0.5 truncate text-[13px] text-[var(--dim)]" />
           </a>
         ))}
       </Rail>
@@ -459,6 +469,58 @@ function Library() {
 
 /* ─────────────────────────── 7b. blog ─────────────────────────── */
 
+function readMin(a: Article) {
+  const words = Object.values(a.body ?? {}).join(" ").split(/\s+/).length + Object.values(a.excerpt).join(" ").split(/\s+/).length * 6;
+  return Math.max(2, Math.round(words / 220));
+}
+
+function Share({ a }: { a: Article }) {
+  const { t, pick } = useLang();
+  return (
+    <button
+      type="button"
+      aria-label={t("h.share")}
+      onClick={(e) => {
+        e.preventDefault();
+        const url = new URL(page("articles", a.slug), location.href).href;
+        if (navigator.share) navigator.share({ title: pick(a.title).text, url }).catch(() => {});
+        else navigator.clipboard?.writeText(url);
+      }}
+      className="text-[var(--dim)] hover:text-[var(--gold)]"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="18" cy="5" r="2.5" /><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="19" r="2.5" /><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5" /></svg>
+    </button>
+  );
+}
+
+function BlogMeta({ a }: { a: Article }) {
+  const { t } = useLang();
+  const { poets } = useContent();
+  const date = useDate();
+  const author = poets.find((p) => p.slug === a.authorSlug)?.name ?? a.authorText;
+  return (
+    <p className="mt-3 flex flex-wrap items-center gap-x-2 text-[12px] text-[var(--dim)]">
+      {author && <><span>{t("art.by")}</span><Tx v={author} className="font-medium text-[var(--text)]" /><span>|</span></>}
+      <Latin>{date(a.date)}</Latin><span>|</span>
+      <span><Latin>{readMin(a)}</Latin> {t("art.minRead")}</span>
+      <span className="ms-auto"><Share a={a} /></span>
+    </p>
+  );
+}
+
+function BlogImg({ a, className }: { a: Article; className: string }) {
+  return (
+    <div className={`relative overflow-hidden bg-[var(--ink-3)] ${className}`}>
+      {a.cover ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={a.cover} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+      ) : (
+        <div className="doch-bg absolute inset-0 grid place-items-center opacity-80"><Tx v={a.title} className="nastaliq px-4 text-center text-[20px] text-[var(--gold)]" /></div>
+      )}
+    </div>
+  );
+}
+
 function Blog() {
   const { articles } = useContent();
   const { t } = useLang();
@@ -467,11 +529,102 @@ function Blog() {
   return (
     <Section id="articles">
       <Title sub={t("art.sub")}>{t("art.blog")}</Title>
-      <div className="grid gap-6 md:grid-cols-2">
-        <div data-anim><ArticleCard a={first} /></div>
-        <div className="grid gap-6">{rest.slice(0, 2).map((a) => <div key={a.slug} data-anim><ArticleCard a={a} /></div>)}</div>
+      <div className={rest.length ? "grid gap-6 lg:grid-cols-[1.1fr_1fr]" : "mx-auto grid max-w-[720px]"}>
+        <a href={page("articles", first.slug)} data-anim data-article-card className="group flex flex-col overflow-hidden rounded-md border border-[var(--faint)] bg-white shadow-sm transition hover:shadow-md">
+          <BlogImg a={first} className="aspect-[16/9]" />
+          <div className="flex flex-1 flex-col p-6">
+            <Tx v={first.title} as="h3" className="text-[24px] font-semibold leading-snug group-hover:text-[var(--gold)]" />
+            <Tx v={first.excerpt} as="p" className="mt-2 line-clamp-3 flex-1 text-[15px] leading-relaxed text-[var(--dim)]" />
+            <span className="mt-3 text-[13px] font-medium text-[var(--gold)]">{t("art.read")}</span>
+            <BlogMeta a={first} />
+          </div>
+        </a>
+        {rest.length > 0 && <div className="grid content-start gap-6">
+          {rest.slice(0, 2).map((a) => (
+            <a key={a.slug} href={page("articles", a.slug)} data-anim data-article-card className="group flex overflow-hidden rounded-md border border-[var(--faint)] bg-white shadow-sm transition hover:shadow-md">
+              <BlogImg a={a} className="w-[38%] shrink-0 min-h-[180px]" />
+              <div className="flex min-w-0 flex-1 flex-col p-5">
+                <Tx v={a.title} as="h3" className="line-clamp-2 text-[18px] font-semibold leading-snug group-hover:text-[var(--gold)]" />
+                <Tx v={a.excerpt} as="p" className="mt-1.5 line-clamp-2 flex-1 text-[14px] leading-relaxed text-[var(--dim)]" />
+                <span className="mt-2 text-[13px] font-medium text-[var(--gold)]">{t("art.read")}</span>
+                <BlogMeta a={a} />
+              </div>
+            </a>
+          ))}
+        </div>}
       </div>
       <a href={page("articles")} className="sec-link">{t("art.all")}</a>
+    </Section>
+  );
+}
+
+/* ─────────────────────────── 7c. poetry collection ─────────────────────────── */
+
+function Collections() {
+  const { poems, poets } = useContent();
+  const { t } = useLang();
+  const forms = new Map<string, { l: Poem["form"]; n: number }>();
+  for (const p of poems) {
+    const k = p.form.en ?? p.form.bal;
+    const f = forms.get(k);
+    if (f) f.n++; else forms.set(k, { l: p.form, n: 1 });
+  }
+  const byPoet = poets.map((p) => ({ p, n: poems.filter((x) => x.authorSlug === p.slug).length })).filter((x) => x.n > 0);
+  const hues = [28, 205, 345, 150, 45, 265, 10, 185];
+  const cards: { key: string; title: ReactNode; bal: string; n: number; href: string }[] = [
+    ...[...forms.entries()].map(([k, f]) => ({ key: "f-" + k, title: <Tx v={f.l} />, bal: f.l.bal, n: f.n, href: page("poetry", "form=" + encodeURIComponent(k)) })),
+    ...byPoet.map(({ p, n }) => ({ key: "p-" + p.slug, title: <Tx v={p.name} />, bal: p.name.bal, n, href: page("poets", p.slug) })),
+  ];
+  if (!cards.length) return null;
+  return (
+    <Section id="collections">
+      <Title sub={t("h.collSub")}>{t("h.coll")}</Title>
+      <Rail itemClass="w-[62%] sm:w-[36%] lg:w-[23%]">
+        {cards.map((c, i) => (
+          <a key={c.key} href={c.href} className="group block" data-collection-card>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+              <div className="absolute inset-0 transition duration-500 group-hover:scale-105" style={{ background: `linear-gradient(150deg, hsl(${hues[i % 8]} 38% 40%), hsl(${hues[i % 8]} 44% 16%))` }} />
+              <div className="doch-bg absolute inset-0 opacity-30" />
+              <span className="nastaliq absolute inset-0 grid place-items-center px-4 text-center text-[clamp(24px,2.2vw,34px)] text-[#f3e3b5]" lang="bal" dir="rtl" style={{ lineHeight: 2 }}>{c.bal}</span>
+            </div>
+            <p className="mt-3 text-[16px] font-semibold group-hover:text-[var(--gold)]">{c.title}</p>
+            <p className="text-[12px] text-[var(--dim)]"><Latin>{c.n}</Latin> {t("h.poems")}</p>
+          </a>
+        ))}
+      </Rail>
+      <a href={page("poetry")} className="sec-link">{t("h.collAll")}</a>
+    </Section>
+  );
+}
+
+/* ─────────────────────────── 7d. more from Labzaank (products) ─────────────────────────── */
+
+function Explore() {
+  const { t } = useLang();
+  const items: { k: DictKey; d: DictKey; href: string; hue: number; glyph: string; bal: string }[] = [
+    { k: "nav.dictionary", d: "x.dict", href: page("dictionary"), hue: 28, glyph: "لبز", bal: "لبزبلد" },
+    { k: "nav.books", d: "x.lib", href: page("library"), hue: 205, glyph: "کتاب", bal: "کتابجاہ" },
+    { k: "nav.media", d: "x.media", href: page("media"), hue: 345, glyph: "توار", bal: "توار ءُ ویڈیو" },
+    { k: "nav.articles", d: "x.art", href: page("articles"), hue: 150, glyph: "نبشتہ", bal: "نبشتانک" },
+  ];
+  return (
+    <Section id="explore">
+      <Title>{t("h.explore")}</Title>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((x) => (
+          <article key={x.k} data-anim data-explore-card className="flex flex-col overflow-hidden rounded-md border border-[var(--faint)] bg-white shadow-sm">
+            <div className="relative grid h-40 place-items-center" style={{ background: `linear-gradient(135deg, hsl(${x.hue} 42% 42%), hsl(${x.hue} 46% 20%))` }}>
+              <div className="doch-bg absolute inset-0 opacity-25" />
+              <span className="nastaliq relative text-[40px] text-[#f3e3b5]" lang="bal" dir="rtl" style={{ lineHeight: 1.9 }}>{x.bal}</span>
+            </div>
+            <div className="flex flex-1 flex-col p-5">
+              <h3 className="text-[18px] font-semibold">{t(x.k)}</h3>
+              <p className="mt-2 flex-1 text-[14px] leading-relaxed text-[var(--dim)]">{t(x.d)}</p>
+              <a href={x.href} className="mt-5 self-start rounded border border-[var(--gold)] px-4 py-1.5 text-[13px] font-semibold uppercase tracking-wider text-[var(--gold)] transition hover:bg-[var(--gold)] hover:text-white rtl:normal-case rtl:tracking-normal">{t("h.learn")}</a>
+            </div>
+          </article>
+        ))}
+      </div>
     </Section>
   );
 }
@@ -513,7 +666,7 @@ function Folk() {
   const { t } = useLang();
   return (
     <Section id="folk" band>
-      <Title sub={t("s.folk.k")}>{t("h.more")}</Title>
+      <Title sub={t("h.folkSub")}>{t("h.folk")}</Title>
       <Rail>
         {folk.map((f, i) => (
           <article key={i} className="flex h-full flex-col rounded-md border border-[var(--faint)] bg-white p-5 shadow-sm">
@@ -679,7 +832,7 @@ function Footer() {
 /* ─────────────────────────── assembly ─────────────────────────── */
 
 const SECTIONS: Record<SectionKey, () => ReactNode> = {
-  poetry: TopPoetry, audio: Recent, videos: Videos, articles: Blog, dictionary: WordOfDay, potd: TodaysSpecial, history: HistorySky, poets: RecommendedPoets,
+  poetry: TopPoetry, audio: Recent, videos: Videos, articles: Blog, dictionary: WordOfDay, potd: TodaysSpecial, history: HistorySky, poets: RecommendedPoets, collections: Collections, explore: Explore,
   stats: Stats, library: Library, events: Events, folk: Folk, manifesto: Manifesto, newsletter: Newsletter, cta: ClosingCta,
 };
 

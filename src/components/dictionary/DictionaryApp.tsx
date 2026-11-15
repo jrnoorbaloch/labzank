@@ -39,6 +39,7 @@ const POS_LABEL: Record<Pos, { en: string; ur: string; bal: string }> = {
   adverb: { en: "adverb", ur: "متعلق فعل", bal: "کارسپت" },
   pronoun: { en: "pronoun", ur: "ضمیر", bal: "بدلنام" },
   particle: { en: "particle", ur: "حرف", bal: "حرف" },
+  numeral: { en: "numeral", ur: "عدد", bal: "اَدَد" },
 };
 
 function usePosLabel() {

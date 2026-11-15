@@ -515,7 +515,7 @@ export function ContentManager({ table }: { table: TableKey }) {
 
 const SECTION_LABELS: Record<string, string> = {
   manifesto: "Manifesto", videos: "Videos rail", articles: "Labzaank blog", potd: "Today's special (poet of the day)", history: "A sky of voices (history constellation)", poetry: "Today's top poetry", dictionary: "Word of the Day",
-  stats: "Archive numbers", poets: "Recommended poets", library: "From the library", folk: "More from Labzaank (folk)", audio: "Labzaank recent (audio)",
+  stats: "Archive numbers", poets: "Recommended poets", library: "From the library", folk: "Folk literature", collections: "Poetry collection rail", explore: "More from Labzaank (product cards)", audio: "Labzaank recent (audio)",
   events: "News & events", newsletter: "Newsletter band", cta: "Closing call to action",
 };
 

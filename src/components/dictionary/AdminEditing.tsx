@@ -21,7 +21,7 @@ const LANGS = [
   ["ur", "Urdu", "rtl"],
   ["brh", "Brahui", "ltr"],
 ] as const;
-const POS = ["noun", "verb", "adjective", "adverb", "pronoun", "particle"];
+const POS = ["noun", "verb", "adjective", "adverb", "pronoun", "particle", "numeral"];
 const REL = ["synonym", "antonym", "see_also", "derived", "variant"];
 
 /* ─────────────────────────── shared ─────────────────────────── */

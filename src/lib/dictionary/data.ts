@@ -6,7 +6,7 @@
  */
 
 export type GlossLang = "bal" | "en" | "ur" | "brh";
-export type Pos = "noun" | "verb" | "adjective" | "adverb" | "pronoun" | "particle";
+export type Pos = "noun" | "verb" | "adjective" | "adverb" | "pronoun" | "particle" | "numeral";
 export type Status = "draft" | "imported" | "pending" | "verified" | "published" | "rejected";
 export type RelType = "derived" | "synonym" | "antonym" | "see_also" | "variant";
 
@@ -140,6 +140,31 @@ export const entries: Entry[] = [
     senses: [{ pos: "noun", gloss: { en: "custom, tradition", ur: "رسم، روایت" } }] }),
   e({ id: "bal-000030", slug: "ganj", arab: "گنج", latn: "ganj", ipa: "/gandʒ/", added: "2026-11-14",
     senses: [{ pos: "noun", gloss: { en: "treasure", ur: "خزانہ" } }] }),
+  // Labzaank editorial — common words (numbers, family); draft until reviewed by a native speaker
+  e({ id: "bal-000031", slug: "yak", arab: "یک", latn: "yak", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "one", ur: "ایک" } }] }),
+  e({ id: "bal-000032", slug: "do", arab: "دو", latn: "do", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "two", ur: "دو" } }] }),
+  e({ id: "bal-000033", slug: "say", arab: "سئے", latn: "say", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "three", ur: "تین" } }] }),
+  e({ id: "bal-000034", slug: "char", arab: "چار", latn: "chár", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "four", ur: "چار" } }] }),
+  e({ id: "bal-000035", slug: "panch", arab: "پنچ", latn: "panch", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "five", ur: "پانچ" } }] }),
+  e({ id: "bal-000036", slug: "shash", arab: "شش", latn: "shash", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "six", ur: "چھ" } }] }),
+  e({ id: "bal-000037", slug: "hapt", arab: "ھپت", latn: "hapt", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "seven", ur: "سات" } }] }),
+  e({ id: "bal-000038", slug: "hasht", arab: "ھشت", latn: "hasht", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "eight", ur: "آٹھ" } }] }),
+  e({ id: "bal-000039", slug: "noh", arab: "نُہ", latn: "noh", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "nine", ur: "نو" } }] }),
+  e({ id: "bal-000040", slug: "dah", arab: "دہ", latn: "dah", added: "2026-11-15",
+    senses: [{ pos: "numeral", gloss: { en: "ten", ur: "دس" } }] }),
+  e({ id: "bal-000041", slug: "brat", arab: "برات", latn: "brát", added: "2026-11-15",
+    senses: [{ pos: "noun", gloss: { en: "brother", ur: "بھائی" } }] }),
+  e({ id: "bal-000042", slug: "gohar", arab: "گہار", latn: "gohár", added: "2026-11-15",
+    senses: [{ pos: "noun", gloss: { en: "sister", ur: "بہن" } }] }),
 ];
 
 /** Arabic-script alphabetical order (Balochi Standard Alphabet + common letters). */

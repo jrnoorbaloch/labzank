@@ -119,6 +119,51 @@ export const poets: Poet[] = [
     works: 48,
     hue: 26,
   },
+  {
+    slug: "mulla-fazul",
+    name: { bal: "مُلا فاضل", "bal-latn": "Mullá Fázel", en: "Mulla Fazul", ur: "ملا فاضل" },
+    period: "classical",
+    years: "c. 1774–1854",
+    place: { bal: "منڈ", "bal-latn": "Mand", en: "Mand", ur: "منڈ" },
+    bio: {
+      bal: "کلاسیکی دور ءِ مزنیں شاعر، کہ بلوچی شعر ءَ نوکیں موضوع ءُ لبز دات اَنت.",
+      "bal-latn": "Kelásiki daur é mazanén shá'er, ke Balòchi shé'rá nókén mauzu' o labz dátant.",
+      en: "A leading poet of the classical age from Mand, who brought new themes and diction to Balochi verse and wrote with a command of Arabic and Persian.",
+      ur: "کلاسیکی دور کے بڑے شاعر، جنہوں نے بلوچی شاعری کو نئے موضوعات اور نیا لہجہ دیا؛ عربی اور فارسی پر بھی عبور رکھتے تھے۔",
+    },
+    works: 0,
+    hue: 36,
+  },
+  {
+    slug: "mubarak-qazi",
+    name: { bal: "مبارک کازی", "bal-latn": "Mobárak Kázi", en: "Mubarak Qazi", ur: "مبارک قاضی" },
+    period: "modern",
+    years: "1956–2023",
+    place: { bal: "پسنی", "bal-latn": "Pasni", en: "Pasni", ur: "پسنی" },
+    bio: {
+      bal: "پسنی ءِ شاعر، کہ آئی ءِ شعر ءَ مہر ءُ مزاہمت یکجاہ اَنت؛ مردمانی شاعر زانگ بیت.",
+      "bal-latn": "Pasni é shá'er, ke ái é shé'rá mehr o mozáhamat yakjáh ant; mardománi shá'er zánag bit.",
+      en: "Poet of Pasni whose modern, revolutionary verse joined love and resistance — remembered as a people's poet. His first collection appeared in 1990.",
+      ur: "پسنی کے شاعر جن کی جدید اور انقلابی شاعری میں محبت اور مزاحمت ایک ساتھ ہیں — عوام کے شاعر کہلاتے ہیں۔ پہلا مجموعہ 1990 میں شائع ہوا۔",
+    },
+    works: 0,
+    hue: 200,
+  },
+  {
+    slug: "munir-momin",
+    name: { bal: "منیر مومن", "bal-latn": "Monir Momen", en: "Munir Momin", ur: "منیر مومن" },
+    period: "modern",
+    years: "1966–",
+    place: { bal: "پیدارک، کیچ", "bal-latn": "Pidárak, Kéch", en: "Pidrak, Kech", ur: "پیدارک، کیچ" },
+    bio: {
+      bal: "مروچی ءِ شاعر، کہ آئی ءِ شعر ءِ نقش ءُ زبان ءِ نازکی نامدار اِنت.",
+      "bal-latn": "Marochí é shá'er, ke ái é shé'r é naqsh o zabán é názoki námdár ent.",
+      en: "Contemporary poet known for finely crafted images and linguistic finesse; author of several collections, including Yak Bechelley Aazman (2014).",
+      ur: "عصرِ حاضر کے شاعر، جن کی شاعری کی تصویریں اور زبان کی نزاکت مشہور ہے؛ کئی مجموعوں کے مصنف، جن میں ’یک بچیلّے آزمان‘ (2014) شامل ہے۔",
+    },
+    works: 0,
+    hue: 160,
+  },
 ];
 
 export type Poem = {
@@ -330,6 +375,42 @@ export const audio: { title: L; by: L; dur: string; bars: number[]; src?: string
     dur: "18:05",
     bars: [],
   },
+  {
+    title: {"bal": "مست ءِ کلام", "bal-latn": "Mast é kalám", "en": "Verses of Mast Tawakali (reading)", "ur": "مست توکلی کا کلام (قرأت)"},
+    by: {"bal": "لبزانک (ڈیمو)", "bal-latn": "Labzaank (demo)", "en": "Labzaank (demo)", "ur": "لبزانک (ڈیمو)"},
+    dur: "6:20",
+    bars: [],
+  },
+  {
+    title: {"bal": "لیکو — ساربانی سوت", "bal-latn": "Léko — sárbáni saut", "en": "Leeko — a camel-driver's song", "ur": "لیکو — ساربان کا گیت"},
+    by: {"bal": "دودی ریکارڈ (ڈیمو)", "bal-latn": "Folk archive (demo)", "en": "Folk archive (demo)", "ur": "لوک آرکائیو (ڈیمو)"},
+    dur: "4:05",
+    bars: [],
+  },
+  {
+    title: {"bal": "شپ ءِ غزل", "bal-latn": "Shap é ghazal", "en": "A ghazal for the night", "ur": "رات کی غزل"},
+    by: {"bal": "شعر خوانی (ڈیمو)", "bal-latn": "Recitation (demo)", "en": "Recitation (demo)", "ur": "شعر خوانی (ڈیمو)"},
+    dur: "7:48",
+    bars: [],
+  },
+  {
+    title: {"bal": "سوت ءُ سروز", "bal-latn": "Saut o sorúz", "en": "Song and the sorud", "ur": "گیت اور سروز"},
+    by: {"bal": "دودی ریکارڈ (ڈیمو)", "bal-latn": "Folk archive (demo)", "en": "Folk archive (demo)", "ur": "لوک آرکائیو (ڈیمو)"},
+    dur: "9:12",
+    bars: [],
+  },
+  {
+    title: {"bal": "بلوچی زبان ءِ تاریخ", "bal-latn": "Balòchi zabán é tárikh", "en": "A short history of Balochi (talk)", "ur": "بلوچی زبان کی مختصر تاریخ (گفتگو)"},
+    by: {"bal": "لبزانک دیوان (ڈیمو)", "bal-latn": "Labzaank Diwán (demo)", "en": "Labzaank Diwan (demo)", "ur": "لبزانک دیوان (ڈیمو)"},
+    dur: "22:30",
+    bars: [],
+  },
+  {
+    title: {"bal": "زہیروک — ماتی یات", "bal-latn": "Zahirók — máti yát", "en": "Zahirok — remembering mother", "ur": "زہیروک — ماں کی یاد"},
+    by: {"bal": "دودی ریکارڈ (ڈیمو)", "bal-latn": "Folk archive (demo)", "en": "Folk archive (demo)", "ur": "لوک آرکائیو (ڈیمو)"},
+    dur: "5:36",
+    bars: [],
+  },
 ];
 
 export const events: { day: string; month: L; title: L; place: L }[] = [
@@ -464,6 +545,26 @@ export const articles: Article[] = [
       en: "Labzaank brings Balochi literature together in one place: classical and modern poetry in the original script, profiles of poets, a growing library, folk literature, recordings and a Balochi dictionary.\n\n## Read it your way\n\nEvery page works in Balochi (Arabic script), English and Urdu.",
       ur: "لبزانک بلوچی ادب کو ایک جگہ جمع کرتا ہے: اصل رسم الخط میں شاعری، شعرا کے تعارف، کتب خانہ، لوک ادب، آوازیں اور بلوچی لغت۔",
     },
+  },
+  {
+    slug: "mubarak-qazi-a-peoples-poet",
+    title: {"bal": "مبارک کازی — مردمانی شاعر", "bal-latn": "Mobárak Kázi — mardománi shá'er", "en": "Mubarak Qazi: a people's poet", "ur": "مبارک قاضی — عوام کے شاعر"},
+    excerpt: {"bal": "پسنی ءِ شاعر کہ مہر ءُ مزاہمت ءَ یک توار ءَ گوشت.", "en": "The poet from Pasni who spoke of love and resistance in one voice, and whose verse was sung across Balochistan.", "ur": "پسنی کے شاعر جنہوں نے محبت اور مزاحمت کو ایک آواز میں کہا۔"},
+    category: "essay",
+    tags: ["mubarak-qazi", "modern-poetry"],
+    authorText: {"bal": "لبزانک ءِ ایڈیٹر", "bal-latn": "Labzaank editors", "en": "Labzaank editors", "ur": "لبزانک مدیران"},
+    date: "2026-11-14T00:00:00Z",
+    body: {"en": "Mubarak Qazi was born in Pasni, on the Makran coast, in the mid-1950s and died in Turbat in September 2023. After school in Pasni he studied in Karachi, then returned home, where he worked at the Pasni fish harbour and helped found a local literary society.\n\n## A poet everyone could read\n\nQazi wrote in a modern style, but his language stayed close to everyday speech. That is one reason he is so often called a *people's poet*: readers of every background could follow him, and many of his poems became songs performed by well-known Balochi singers on radio and television.\n\n## Love and resistance\n\nCritics and obituary writers return to the same pairing: his poems hold tenderness and political protest side by side. He published more than ten collections, the first in 1990 and the last in 2022, and English translations of his work have appeared in recent years.\n\n## Further reading\n\nObituaries in *Dawn* and *The Friday Times* (September 2023) and the Wikipedia article on Mubarak Qazi give more detail. Labzaank does not publish the texts of his poems, which remain under copyright.", "ur": "مبارک قاضی مکران کے ساحلی شہر پسنی میں پیدا ہوئے اور ستمبر 2023 میں تربت میں انتقال کر گئے۔ ان کی جدید مگر عام فہم شاعری میں محبت اور مزاحمت ساتھ ساتھ چلتی ہیں، اسی لیے انہیں عوام کا شاعر کہا جاتا ہے۔ ان کے دس سے زیادہ مجموعے شائع ہوئے، اور ان کا بہت سا کلام معروف بلوچی گلوکاروں نے گایا۔"},
+  },
+  {
+    slug: "forms-of-balochi-poetry",
+    title: {"bal": "بلوچی شعر ءِ دروشم", "bal-latn": "Balòchi shé'r é droshm", "en": "The forms of Balochi poetry: a short guide", "ur": "بلوچی شاعری کی اصناف: مختصر رہنما"},
+    excerpt: {"bal": "شیئر، زہیروک، لیکو، غزل ءُ نوکیں آزاتیں شعر.", "en": "From heroic ballads and zahirok to the ghazal and free verse — how Balochi poetry has changed shape over five centuries.", "ur": "رزمیہ داستانوں اور زہیروک سے غزل اور آزاد نظم تک — بلوچی شاعری کی صورتیں۔"},
+    category: "language",
+    tags: ["forms", "classical", "folk"],
+    authorText: {"bal": "لبزانک ءِ ایڈیٹر", "bal-latn": "Labzaank editors", "en": "Labzaank editors", "ur": "لبزانک مدیران"},
+    date: "2026-11-13T00:00:00Z",
+    body: {"en": "Balochi poetry was an oral art long before it was a written one. By the fifteenth century it was already well established, carried by poets and minstrels who performed from memory.\n\n## Classical ballads\n\nThe oldest surviving poems are long narrative ballads — heroic, historical and romantic. They tell of battles, of tribal heroes and of famous lovers, and were sung rather than read.\n\n## Folk forms\n\n- **Zahirok** — a melancholy song of longing, often for an absent loved one.\n- **Leeko** — short sung couplets, traditionally linked with travellers and camel drivers.\n- **Lullabies and wedding songs** — a large body of verse kept alive mostly by women.\n\n## Lyric and mystic verse\n\nFrom the eighteenth century onward, lyric poetry grows alongside the ballads. Poets such as Mulla Fazul and Mast Tawakali in the nineteenth century brought new themes, mystic ideas and a richer vocabulary.\n\n## Modern poetry\n\nIn the twentieth century poets like Gul Khan Naseer, Syed Zahoor Shah Hashmi and Atta Shad adopted the ghazal and the nazm, and later free verse, sonnets and haiku. Today, contemporary poets continue to experiment with form while drawing on this long oral tradition.\n\n*Source note: this overview summarises the standard histories of Balochi literature; see the Uppsala University Balochi Language Project for a scholarly introduction.*", "ur": "بلوچی شاعری تحریر سے بہت پہلے زبانی فن تھی۔ قدیم ترین نظمیں رزمیہ، تاریخی اور رومانوی داستانیں ہیں۔ لوک اصناف میں زہیروک اور لیکو مشہور ہیں۔ انیسویں صدی میں ملا فاضل اور مست توکلی نے نئے موضوعات دیے، اور بیسویں صدی میں گل خان نصیر، سید ظہور شاہ ہاشمی اور عطا شاد نے غزل، نظم اور آزاد نظم کو فروغ دیا۔"},
   },
 ];
 

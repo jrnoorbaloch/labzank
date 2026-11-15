@@ -13,11 +13,11 @@ const PRIMARY: { k: DictKey; href: string }[] = [
   { k: "nav.poetry", href: "@poetry" },
   { k: "nav.dictionary", href: "@dictionary" },
   { k: "nav.books", href: "@library" },
+];
+const MORE: { k: DictKey; href: string }[] = [
   { k: "nav.media", href: "@media" },
   { k: "nav.culture", href: "#folk" },
   { k: "nav.articles", href: "@articles" },
-];
-const MORE: { k: DictKey; href: string }[] = [
   { k: "nav.prose", href: "@library" },
   { k: "nav.about", href: "@about" },
   { k: "nav.contact", href: "@contact" },
