@@ -572,7 +572,7 @@ export default function DictionaryApp() {
       <header className="mb-10 flex flex-wrap items-end justify-between gap-6">
         <div>
           <a href="#" className="block">
-            <p className="kicker">Labzank</p>
+            <p className="kicker">Labzaank</p>
             <h1 className="display mt-2 text-[clamp(36px,5vw,72px)]">{t("d.title")}</h1>
           </a>
           <p className="lead mt-2">{t("d.sub")}</p>

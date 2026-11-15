@@ -1,4 +1,4 @@
-# Labzank — Balochi Literature & Heritage (homepage, phase 1)
+# Labzaank — Balochi Literature & Heritage (homepage, phase 1)
 
 A cinematic, scroll-driven homepage for the Balochi digital literature platform. It is built with Next.js 15, GSAP ScrollTrigger and Lenis, and the interface comes in three languages: Balochi (default, in Arabic and Latin script), English and Urdu.
 

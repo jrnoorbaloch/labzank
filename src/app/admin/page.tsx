@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AdminDictionary from "@/components/dictionary/AdminDictionary";
 
 export const metadata: Metadata = {
-  title: "Admin — Labzank",
+  title: "Admin — Labzaank",
   robots: { index: false, follow: false },
 };
 

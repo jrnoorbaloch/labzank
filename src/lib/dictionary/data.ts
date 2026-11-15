@@ -1,5 +1,5 @@
 /**
- * Sample dictionary — ORIGINAL entries written for Labzank, status "draft".
+ * Sample dictionary — ORIGINAL entries written for Labzaank, status "draft".
  * No entry here is copied from Labzganj or any other dictionary. Every entry
  * still needs a native linguistic editor before it may be marked verified.
  * Shapes mirror db/dictionary.sql (entries → senses → glosses / examples).
@@ -35,9 +35,9 @@ export type Entry = {
 
 export const sources: Record<string, { name: string; licence: string; attribution: string; url?: string }> = {
   "labzank-editorial": {
-    name: "Labzank editorial (sample)",
+    name: "Labzaank editorial (sample)",
     licence: "CC BY-SA 4.0 (proposed)",
-    attribution: "Labzank editors — draft, not yet verified",
+    attribution: "Labzaank editors — draft, not yet verified",
   },
 };
 

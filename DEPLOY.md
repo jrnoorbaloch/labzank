@@ -1,4 +1,4 @@
-# Going live — Labzank
+# Going live — Labzaank
 
 The site builds to plain static files (`out/`) and talks to Supabase from the browser,
 so any static host works. Netlify or Vercel are the easiest.

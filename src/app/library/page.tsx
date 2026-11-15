@@ -4,7 +4,7 @@ import SearchOverlay from "@/components/SearchOverlay";
 import { LibraryPage } from "@/components/pages/Literature";
 
 export const metadata: Metadata = {
-  title: "Balochi Library — Labzank",
+  title: "Balochi Library — Labzaank",
   description: "Books on Balochi poetry, literature, history and language.",
   alternates: { canonical: "/library.html" },
 };

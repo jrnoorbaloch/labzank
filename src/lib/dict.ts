@@ -98,7 +98,7 @@ export const dict = {
   "hero.featured": { bal: "گچینیں کتاب", "bal-latn": "Gechénén ketáb", en: "Featured book", ur: "منتخب کتاب" },
 
   // ── sections ──
-  "s.manifesto.k": { bal: "لبزانک", "bal-latn": "Labzánk", en: "Labzank", ur: "لبزانک" },
+  "s.manifesto.k": { bal: "لبزانک", "bal-latn": "Labzaank", en: "Labzaank", ur: "لبزانک" },
   "s.manifesto.h": {
     bal: "زبان تانکہ زندگ اِنت کہ وانگ بیت.",
     "bal-latn": "Zabán tánke zendag ent ke wánag bit.",
@@ -312,7 +312,7 @@ export const dict = {
   "pg.morePoems": { bal: "دگہ شعر", "bal-latn": "Dega shé'r", en: "More poetry", ur: "مزید شاعری" },
   "pg.count": { bal: "عدد", "bal-latn": "adad", en: "items", ur: "اندراجات" },
   "h.top": { bal: "مروچی ءِ گچینیں بلوچی شعر", "bal-latn": "Marochí é gechénén Balòchi shé'r", en: "Today's top Balochi poetry", ur: "آج کی منتخب بلوچی شاعری" },
-  "h.recent": { bal: "لبزانک ءِ نوکیں توار", "bal-latn": "Labzánk é nókén tawár", en: "Labzank recent", ur: "لبزانک کی نئی آوازیں" },
+  "h.recent": { bal: "لبزانک ءِ نوکیں توار", "bal-latn": "Labzaank é nókén tawár", en: "Labzaank recent", ur: "لبزانک کی نئی آوازیں" },
   "h.recentSub": { bal: "بشکن، شنگ کن، بزان.", "bal-latn": "Beshkon, shang kan, bezán.", en: "Listen. Share. Learn.", ur: "سنیں۔ شیئر کریں۔ سیکھیں۔" },
   "h.meaning": { bal: "معنا", "bal-latn": "ma'ná", en: "meaning", ur: "معنی" },
   "h.special": { bal: "مروچی ءِ خاص", "bal-latn": "Marochí é khás", en: "Today's special", ur: "آج کی خاص پیشکش" },
@@ -321,7 +321,7 @@ export const dict = {
   "h.library": { bal: "کتابجاہ ءَ چہ", "bal-latn": "Ketábjáhá cha", en: "From the library", ur: "کتب خانے سے" },
   "h.librarySub": { bal: "شاعری، تاریخ، زبان ءُ دود ءِ کتاب", "bal-latn": "Shá'eri, tárikh, zabán o dód é ketáb", en: "Books on poetry, history, language and culture", ur: "شاعری، تاریخ، زبان اور ثقافت پر کتابیں" },
   "h.events": { bal: "نوکیں ہال ءُ دیوان", "bal-latn": "Nókén hál o diwán", en: "News & events", ur: "خبریں اور تقریبات" },
-  "h.more": { bal: "لبزانک ءَ چہ گیشتر", "bal-latn": "Labzánká cha géshtar", en: "More from Labzank", ur: "لبزانک سے مزید" },
+  "h.more": { bal: "لبزانک ءَ چہ گیشتر", "bal-latn": "Labzaanká cha géshtar", en: "More from Labzaank", ur: "لبزانک سے مزید" },
   "h.fav": { bal: "دوست", "bal-latn": "Dost", en: "Add to favourites", ur: "پسندیدہ میں شامل کریں" },
   "h.faved": { bal: "دوستیں", "bal-latn": "Dostén", en: "Favourite", ur: "پسندیدہ" },
   "h.share": { bal: "شنگ کن", "bal-latn": "Shang kan", en: "Share this", ur: "شیئر کریں" },
@@ -339,7 +339,7 @@ export const dict = {
   "f.msg": { bal: "کلوہ", "bal-latn": "Kolawh", en: "Message", ur: "پیغام" },
   "f.send": { bal: "کلوہ ءَ راہ دے", "bal-latn": "Kolawhá ráh day", en: "Send message", ur: "پیغام بھیجیں" },
   "f.sent": { bal: "منت وار — تئی کلوہ رسِت.", "bal-latn": "Mennatwár — tai kolawh raset.", en: "Thank you — your message has been sent.", ur: "شکریہ — آپ کا پیغام بھیج دیا گیا۔" },
-  "f.agree": { bal: "من لبزانک ءِ نوکیں ہال زیرگ ءَ منّاں", "bal-latn": "Man Labzánk é nókén hál zirag á mannán", en: "I agree to receive the Labzank newsletter", ur: "میں لبزانک نیوز لیٹر وصول کرنے سے متفق ہوں" },
+  "f.agree": { bal: "من لبزانک ءِ نوکیں ہال زیرگ ءَ منّاں", "bal-latn": "Man Labzaank é nókén hál zirag á mannán", en: "I agree to receive the Labzaank newsletter", ur: "میں لبزانک نیوز لیٹر وصول کرنے سے متفق ہوں" },
   "f.follow": { bal: "مئے گوں بہ بئے", "bal-latn": "Mai gón bebay", en: "Follow us", ur: "ہمیں فالو کریں" },
 } satisfies Record<string, E>;
 

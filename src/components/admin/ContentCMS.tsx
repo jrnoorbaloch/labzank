@@ -462,7 +462,7 @@ export function ContentManager({ table }: { table: TableKey }) {
 
 const SECTION_LABELS: Record<string, string> = {
   manifesto: "Manifesto", potd: "Today's special (poet of the day)", poetry: "Today's top poetry", dictionary: "Word of the Day",
-  stats: "Archive numbers", poets: "Recommended poets", library: "From the library", folk: "More from Labzank (folk)", audio: "Labzank recent (audio)",
+  stats: "Archive numbers", poets: "Recommended poets", library: "From the library", folk: "More from Labzaank (folk)", audio: "Labzaank recent (audio)",
   events: "News & events", newsletter: "Newsletter band", cta: "Closing call to action",
 };
 

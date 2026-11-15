@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Logo from "@/components/Logo";
 import { entries, wordOfDaySchedule, bySlug } from "@/lib/dictionary/data";
 import { check, Checked, errorReport, guessMapping, Mapping, parseCSV, parseExcel, parseJSON, Row, SAMPLE_CSV, summary, TARGET_FIELDS, TargetKey } from "@/lib/dictionary/importer";
 import { detectScript } from "@/lib/dictionary/normalize";
@@ -110,7 +111,7 @@ function SignIn() {
   return (
     <div className="grid min-h-screen place-items-center p-6" lang="en" dir="ltr" style={{ fontFamily: "var(--latin-body)" }}>
       <form onSubmit={go} className="card w-full max-w-[400px] p-8">
-        <span className="nastaliq text-[28px] text-[var(--gold)]" lang="bal" style={{ lineHeight: 1.7 }}>لبزانک</span>
+        <Logo className="text-[28px] text-[var(--text)]" />
         <h1 className="mt-1 text-[22px] font-semibold">Admin sign-in</h1>
         <p className="mt-1 text-[13px] text-[var(--dim)]">Dictionary staff only. Accounts are created by a Super Admin in Supabase.</p>
         <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-6 w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2.5 outline-none focus:border-[var(--gold)]/60" />
@@ -180,7 +181,7 @@ function AdminShell({ canImport, email, roles }: { canImport: boolean; email?: s
     <div className="min-h-screen" lang="en" dir="ltr" style={{ fontFamily: "var(--latin-body)" }}>
       <header className="flex items-center justify-between border-b border-[var(--faint)] px-6 py-3">
         <a href={page("home")} className="flex items-baseline gap-2">
-          <span className="nastaliq text-[22px] text-[var(--gold)]" lang="bal" style={{ lineHeight: 1.6 }}>لبزانک</span>
+          <Logo className="text-[20px] text-[var(--text)]" />
           <span className="text-[11px] uppercase tracking-[0.3em] text-[var(--dim)]">Admin</span>
         </a>
         <span className="flex items-center gap-3 text-[11px]">
@@ -545,7 +546,7 @@ function Importer({ onImported }: { onImported: (b: Batch) => void }) {
             <h2 className="mb-3 font-semibold">Source and licence (required)</h2>
             <label className="mb-3 block text-[13px] text-[var(--dim)]">
               Source name
-              <input value={source} onChange={(e) => setSource(e.target.value)} placeholder="e.g. Labzank editorial, field notes 2026" className="mt-1 w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--gold)]/60" />
+              <input value={source} onChange={(e) => setSource(e.target.value)} placeholder="e.g. Labzaank editorial, field notes 2026" className="mt-1 w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--gold)]/60" />
             </label>
             <label className="mb-3 block text-[13px] text-[var(--dim)]">
               Licence and attribution

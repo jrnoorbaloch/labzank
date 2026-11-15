@@ -21,16 +21,16 @@ import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Labzank — Balochi Literature & Heritage",
+  title: "Labzaank — Balochi Literature & Heritage",
   description:
     "A digital home for Balochi poetry, poets, books, the Balochi dictionary and cultural heritage — in Balochi, English and Urdu.",
-  keywords: ["Balochi", "Balochi poetry", "Balochi dictionary", "Balochi literature", "Baloch poets", "بلوچی", "بلوچی شاعری", "Labzank"],
+  keywords: ["Balochi", "Balochi poetry", "Balochi dictionary", "Balochi literature", "Baloch poets", "بلوچی", "بلوچی شاعری", "Labzaank"],
   openGraph: {
-    title: "Labzank — Balochi Literature & Heritage",
+    title: "Labzaank — Balochi Literature & Heritage",
     description: "Balochi poetry, poets, books, dictionary and heritage — in Balochi, English and Urdu.",
     type: "website",
-    siteName: "Labzank",
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Labzank — Balochi literature & heritage" }],
+    siteName: "Labzaank",
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Labzaank — Balochi literature & heritage" }],
   },
   twitter: { card: "summary_large_image", images: ["/og.jpg"] },
   alternates: { canonical: "/" },

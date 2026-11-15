@@ -4,8 +4,8 @@ export const dynamic = "force-static";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Labzank — Balochi Literature & Heritage",
-    short_name: "Labzank",
+    name: "Labzaank — Balochi Literature & Heritage",
+    short_name: "Labzaank",
     description: "Balochi poetry, poets, books and dictionary — in Balochi, English and Urdu.",
     start_url: "./",
     display: "standalone",

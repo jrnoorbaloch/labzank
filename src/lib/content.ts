@@ -326,7 +326,7 @@ export const audio: { title: L; by: L; dur: string; bars: number[]; src?: string
   },
   {
     title: { bal: "شاعر ءِ گوں گپ", "bal-latn": "Shá'er é gón gap", en: "In conversation with a poet", ur: "شاعر سے گفتگو" },
-    by: { bal: "لبزانک دیوان (ڈیمو)", "bal-latn": "Labzánk Diwán (demo)", en: "Labzank Diwan (demo)", ur: "لبزانک دیوان (ڈیمو)" },
+    by: { bal: "لبزانک دیوان (ڈیمو)", "bal-latn": "Labzaank Diwán (demo)", en: "Labzaank Diwan (demo)", ur: "لبزانک دیوان (ڈیمو)" },
     dur: "18:05",
     bars: [],
   },

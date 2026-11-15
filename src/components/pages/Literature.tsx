@@ -38,7 +38,7 @@ function useTitle(title?: string) {
   useEffect(() => {
     if (!title) return;
     const prev = document.title;
-    document.title = `${title} — Labzank`;
+    document.title = `${title} — Labzaank`;
     return () => { document.title = prev; };
   }, [title]);
 }

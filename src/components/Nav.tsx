@@ -5,6 +5,7 @@ import { LANGS, useLang } from "@/lib/i18n";
 import type { DictKey } from "@/lib/dict";
 import { openSearch, SearchIcon } from "./search";
 import { page, PageName } from "@/lib/links";
+import Logo from "./Logo";
 
 /** Rekhta-style top bar: logo · section links · search · language · log in. */
 const PRIMARY: { k: DictKey; href: string }[] = [
@@ -54,9 +55,8 @@ export default function Nav({ onHome = true, active }: { onHome?: boolean; activ
     <>
       <header className="sticky top-0 z-[80] border-b border-[var(--faint)] bg-white/95 backdrop-blur" data-nav>
         <div className="mx-auto flex h-[60px] max-w-[1400px] items-center gap-5 px-[3vw]">
-          <a href={resolve("#top", onHome)} className="flex shrink-0 items-baseline gap-2" aria-label="Labzank home">
-            <span className="nastaliq text-[26px] leading-none text-[var(--gold)]" lang="bal" dir="rtl" style={{ lineHeight: 1.5 }}>لبزانک</span>
-            <span className="hidden font-[family-name:var(--latin-display)] text-[17px] font-semibold tracking-tight text-[var(--text)] sm:inline" lang="en" dir="ltr">labzank</span>
+          <a href={resolve("#top", onHome)} className="flex shrink-0 items-center" aria-label="Labzaank home">
+            <Logo />
           </a>
 
           <nav className="hidden flex-1 items-center justify-center gap-[1.4vw] text-[12px] uppercase tracking-[0.06em] rtl:text-[15px] rtl:normal-case rtl:tracking-normal xl:flex" aria-label="Primary">

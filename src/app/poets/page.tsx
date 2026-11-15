@@ -4,7 +4,7 @@ import SearchOverlay from "@/components/SearchOverlay";
 import { PoetsPage } from "@/components/pages/Literature";
 
 export const metadata: Metadata = {
-  title: "Balochi Poets & Authors — Labzank",
+  title: "Balochi Poets & Authors — Labzaank",
   description: "Profiles of classical and modern Balochi poets and writers, with their poetry, books and recitations.",
   alternates: { canonical: "/poets.html" },
 };

@@ -16,6 +16,7 @@ import { repo } from "@/lib/dictionary/repo";
 import { page } from "@/lib/links";
 import { bookPdfUrl } from "@/lib/media";
 import { openSearch } from "./search";
+import Logo from "./Logo";
 
 /* ─────────────────────────── shared pieces ─────────────────────────── */
 
@@ -460,7 +461,7 @@ function Events() {
   );
 }
 
-/* ─────────────────────────── 9. folk / more from labzank ─────────────────────────── */
+/* ─────────────────────────── 9. folk / more from Labzaank ─────────────────────────── */
 
 function Folk() {
   const { folk } = useContent();
@@ -616,8 +617,8 @@ function Footer() {
       </div>
       <div className="wrap flex flex-wrap items-center justify-between gap-4 border-t border-white/10 py-5 text-[12px] text-white/55">
         <span className="flex items-baseline gap-2">
-          <span className="nastaliq text-[20px] text-[#e9c27a]" lang="bal" style={{ lineHeight: 1.6 }}>لبزانک</span>
-          <span lang="en" dir="ltr" className={latin}>© 2026 Labzank</span>
+          <Logo className="text-[20px] text-[#e9c27a]" />
+          <span lang="en" dir="ltr" className={latin}>© 2026</span>
         </span>
         <span className="max-w-[70ch]">
           {t("f.fine")}

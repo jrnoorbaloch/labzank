@@ -4,7 +4,7 @@ import DictionaryApp from "@/components/dictionary/DictionaryApp";
 import SearchOverlay from "@/components/SearchOverlay";
 
 export const metadata: Metadata = {
-  title: "Balochi Dictionary — Labzank",
+  title: "Balochi Dictionary — Labzaank",
   description: "Search Balochi words in Arabic or Latin script, with meanings in Balochi, English, Urdu and Brahui.",
   alternates: { canonical: "/dictionary.html" },
 };
