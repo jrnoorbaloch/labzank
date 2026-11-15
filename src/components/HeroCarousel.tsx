@@ -12,7 +12,7 @@ import { heroArt } from "@/lib/content";
 import { useContent } from "@/lib/content-store";
 import { page, PageName } from "@/lib/links";
 
-const INTERVAL = 6500;
+const INTERVAL = 5000;
 
 function href(h: string) {
   if (h.startsWith("@")) return page(h.slice(1) as PageName);
