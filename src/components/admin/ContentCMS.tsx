@@ -18,7 +18,7 @@ import { Bucket, LIMITS, bookPdfUrl, mediaUrl, removeMedia, uploadMedia } from "
 type Row = Record<string, any>;
 type L = { bal?: string; "bal-latn"?: string; en?: string; ur?: string };
 
-type FieldType = "text" | "textarea" | "number" | "bool" | "select" | "L" | "Ltext" | "translation" | "quote" | "palette" | "date" | "datetime" | "author" | "book" | "image" | "audio" | "pdf";
+type FieldType = "text" | "textarea" | "number" | "bool" | "select" | "L" | "Ltext" | "translation" | "quote" | "palette" | "date" | "datetime" | "author" | "book" | "image" | "audio" | "pdf" | "cta";
 type Field = { key: string; label: string; type: FieldType; required?: boolean; options?: string[]; hint?: string; dir?: "rtl" | "ltr"; wide?: boolean };
 
 const MEDIA_BUCKET: Partial<Record<FieldType, Bucket>> = { image: "images", audio: "audio", pdf: "books" };
@@ -120,13 +120,14 @@ export const TABLES: Record<TableKey, { title: string; singular: string; titleFi
   },
   hero_slides: {
     title: "Hero slider", singular: "slide", titleField: "heading", hasStatus: false,
-    note: "The final card of the scroll film shows the first enabled slide.",
+    note: "The homepage carousel. Wide images work best (about 1600 × 560, artwork on the left, calm space on the right for the text). Without an image the built-in artwork for that position is shown.",
     defaults: { enabled: true, sort: 0, cta: [] },
     fields: [
       { key: "heading", label: "Heading", type: "L", required: true, wide: true },
       { key: "description", label: "Description", type: "Ltext", wide: true },
-      { key: "quote", label: "Featured quote", type: "quote", wide: true },
-      { key: "featured_book_slug", label: "Featured book", type: "book" },
+      { key: "image_desktop_path", label: "Image (desktop)", type: "image" },
+      { key: "image_mobile_path", label: "Image (mobile, optional)", type: "image" },
+      { key: "cta", label: "Button", type: "cta", wide: true, hint: "Link examples: @poetry, @poets, @library, @dictionary, #folk, or a full https:// address. Leave the label empty for no button." },
       { key: "enabled", label: "Enabled", type: "bool" },
       { key: "publish_from", label: "Show from", type: "datetime" },
       { key: "publish_until", label: "Show until", type: "datetime" },
@@ -135,7 +136,7 @@ export const TABLES: Record<TableKey, { title: string; singular: string; titleFi
   },
 };
 
-const inputCls = "w-full rounded-lg border border-[var(--faint)] bg-black/30 px-3 py-2 outline-none focus:border-[var(--gold)]/60";
+const inputCls = "w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2 outline-none focus:border-[var(--gold)]/60";
 const LLANGS: [keyof L, string, "rtl" | "ltr"][] = [["bal", "بلوچی", "rtl"], ["bal-latn", "Balòchi (Latin)", "ltr"], ["en", "English", "ltr"], ["ur", "اردو", "rtl"]];
 
 const pickL = (v: unknown): string => {
@@ -146,7 +147,7 @@ const slugify = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]
 const cleanL = (l: L) => Object.fromEntries(Object.entries(l ?? {}).filter(([, v]) => typeof v === "string" && v.trim()).map(([k, v]) => [k, (v as string).trim()]));
 
 function StatusPill({ s }: { s: string }) {
-  const tone: Record<string, string> = { draft: "border-white/20 text-[var(--dim)]", pending_review: "border-amber-400/50 text-amber-300", published: "border-[var(--gold)] text-[var(--gold-bright)]", archived: "border-white/10 text-[var(--dim)]/60" };
+  const tone: Record<string, string> = { draft: "border-black/15 text-[var(--dim)]", pending_review: "border-amber-400/50 text-amber-700", published: "border-[var(--gold)] text-[var(--gold-bright)]", archived: "border-black/10 text-[var(--dim)]/60" };
   return <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[11px] ${tone[s] ?? ""}`}>{s.replace("_", " ")}</span>;
 }
 
@@ -243,12 +244,22 @@ function FieldEditor({ f, value, set, authors, books, table, onUploaded, setOthe
         </div>
       );
     }
+    case "cta": {
+      const arr = (value as { label?: L; href?: string }[]) ?? [];
+      const v = arr[0] ?? {};
+      return (
+        <div className="grid gap-2">
+          <LInput value={v.label ?? {}} onChange={(label) => set([{ ...v, label }])} />
+          <input placeholder="Link, e.g. @poetry" dir="ltr" value={v.href ?? ""} onChange={(e) => set([{ ...v, href: e.target.value }])} className={inputCls} />
+        </div>
+      );
+    }
     case "palette": {
       const v = (value as string[]) ?? ["#3a1020", "#d9a441"];
       return (
         <div className="flex items-center gap-3">
           {[0, 1].map((i) => <input key={i} type="color" value={v[i] ?? "#000000"} onChange={(e) => set(i === 0 ? [e.target.value, v[1]] : [v[0], e.target.value])} className="h-10 w-14 rounded border border-[var(--faint)] bg-transparent" />)}
-          <span className="h-14 w-10 rounded" style={{ background: `linear-gradient(160deg, ${v[0]}, #0d0a07 140%)`, boxShadow: `inset 0 0 0 2px ${v[1]}66` }} />
+          <span className="h-14 w-10 rounded" style={{ background: `linear-gradient(160deg, ${v[0]}, #000 140%)`, boxShadow: `inset 0 0 0 2px ${v[1]}66` }} />
         </div>
       );
     }
@@ -339,6 +350,11 @@ export function ContentManager({ table }: { table: TableKey }) {
       if (f.type === "L" || f.type === "Ltext") v = Object.keys(cleanL(v)).length ? cleanL(v) : null;
       if (f.type === "translation") v = cleanL(v ?? {});
       if (f.type === "quote") v = v?.text ? { text: v.text, roman: v.roman ?? "", credit: cleanL(v.credit ?? {}) } : null;
+      if (f.type === "cta") {
+        const c = (v ?? [])[0] ?? {};
+        const label = cleanL(c.label ?? {});
+        v = label.bal && c.href?.trim() ? [{ label, href: c.href.trim() }] : [];
+      }
       if (f.type === "text" && typeof v === "string") v = v.trim() || null;
       if (f.key === "slug" && typeof v === "string") v = slugify(v);
       out[f.key] = v ?? null;
@@ -420,7 +436,7 @@ export function ContentManager({ table }: { table: TableKey }) {
         {loading && <p className="p-6 text-[var(--dim)]">Loading…</p>}
         {!loading && shown.length === 0 && <p className="p-8 text-center text-[var(--dim)]">Nothing yet.</p>}
         {shown.map((r) => (
-          <div key={r.id} className="flex flex-wrap items-center gap-4 px-5 py-3 hover:bg-white/[0.03]">
+          <div key={r.id} className="flex flex-wrap items-center gap-4 px-5 py-3 hover:bg-[var(--ink-2)]">
             <button className="min-w-[220px] flex-1 text-start" onClick={() => open(r)}>
               <span lang="bal" dir="rtl" className="me-3 text-[18px]">{pickL(r[cfg.titleField])}</span>
               <span className="text-[13px] text-[var(--dim)]">{typeof r[cfg.titleField] === "object" ? r[cfg.titleField]?.en ?? "" : r.slug}</span>
@@ -445,9 +461,9 @@ export function ContentManager({ table }: { table: TableKey }) {
 /* ─────────────────────────── homepage builder ─────────────────────────── */
 
 const SECTION_LABELS: Record<string, string> = {
-  manifesto: "Manifesto", potd: "Poet of the Day", poetry: "Today's poetry", dictionary: "Dictionary · Word of the Day",
-  stats: "Archive numbers", poets: "Famous poets", library: "Library shelf", folk: "Folk literature", audio: "Audio poetry",
-  events: "Events & news", newsletter: "Newsletter sign-up", cta: "Closing call to action",
+  manifesto: "Manifesto", potd: "Today's special (poet of the day)", poetry: "Today's top poetry", dictionary: "Word of the Day",
+  stats: "Archive numbers", poets: "Recommended poets", library: "From the library", folk: "More from Labzank (folk)", audio: "Labzank recent (audio)",
+  events: "News & events", newsletter: "Newsletter band", cta: "Closing call to action",
 };
 
 export function HomepageBuilder() {
@@ -659,12 +675,41 @@ export function DictionaryVisibility() {
         ))}
       </div>
       {!preview && n("verified", "published") === 0 && (
-        <p className="mt-4 rounded-lg border border-amber-400/40 bg-amber-400/5 p-3 text-[13px] text-amber-200">
+        <p className="mt-4 rounded-lg border border-amber-400/40 bg-amber-400/5 p-3 text-[13px] text-amber-800">
           No word is Verified or Published yet, so the public dictionary would be empty. Review words in Dictionary → Review queue first.
         </p>
       )}
       <div className="mt-5 flex items-center gap-3">
         <button className="pill pill-gold disabled:opacity-50" disabled={preview === saved || saving} onClick={save}>{saving ? "Saving…" : "Save"}</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────── contact messages ─────────────────────────── */
+
+export function Messages() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [open, setOpen] = useState<number | null>(null);
+  useEffect(() => {
+    supabase!.from("contact_messages").select("*").order("created_at", { ascending: false }).then(({ data, error }) => (error ? toast(error.message) : setRows(data ?? [])));
+  }, []);
+  return (
+    <div className="max-w-[900px]">
+      <h1 className="text-[28px] font-semibold tracking-tight">Messages</h1>
+      <p className="mb-6 mt-1 text-[14px] text-[var(--dim)]">Sent from the “Write to us” form in the website footer. Only admins can read them.</p>
+      <div className="card divide-y divide-[var(--faint)]">
+        {rows.length === 0 && <p className="p-8 text-center text-[var(--dim)]">No messages yet.</p>}
+        {rows.map((r) => (
+          <div key={r.id} className="px-5 py-3" data-message>
+            <button className="flex w-full flex-wrap items-baseline gap-x-4 text-start" onClick={() => setOpen(open === r.id ? null : r.id)}>
+              <span className="font-medium">{r.name}</span>
+              <a href={`mailto:${r.email}`} className="text-[13px] text-[var(--gold)] hover:underline" onClick={(e) => e.stopPropagation()}>{r.email}</a>
+              <span className="ms-auto text-[12px] text-[var(--dim)]">{new Date(r.created_at).toLocaleString("en-GB")}</span>
+              <span className={`w-full text-[14px] text-[var(--dim)] ${open === r.id ? "whitespace-pre-wrap" : "truncate"}`}>{r.message}</span>
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -9,8 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Balochi poetry, poets, books and dictionary — in Balochi, English and Urdu.",
     start_url: "./",
     display: "standalone",
-    background_color: "#0d0a07",
-    theme_color: "#0d0a07",
+    background_color: "#ffffff",
+    theme_color: "#ffffff",
     icons: [{ src: "favicon.ico", sizes: "any", type: "image/x-icon" }],
   };
 }

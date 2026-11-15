@@ -6,6 +6,7 @@
 import { writeFileSync } from "node:fs";
 import { entries, sources, wordOfDaySchedule } from "../src/lib/dictionary/data";
 import { audio, books, events, folk, heroSlides, poems, poets } from "../src/lib/content";
+import { DEFAULT_SECTIONS, SECTION_KEYS } from "../src/lib/sections";
 
 const q = (s: string | undefined | null) => (s == null || s === "" ? "null" : `'${String(s).replace(/'/g, "''")}'`);
 const j = (v: unknown) => (v == null ? "null" : `${q(JSON.stringify(v))}::jsonb`);
@@ -30,11 +31,12 @@ events.forEach((e, i) => out.push(`insert into public.events (day, month, title,
 folk.forEach((f, i) => out.push(`insert into public.folk_items (title, body, glyph, sort, status) values (${j(f.title)}, ${j(f.body)}, ${q(f.glyph)}, ${i}, 'published');`));
 audio.forEach((a, i) => out.push(`insert into public.audio_items (title, by_line, duration, sort, status) values (${j(a.title)}, ${j(a.by)}, ${q(a.dur)}, ${i}, 'published');`));
 heroSlides.forEach((h, i) =>
-  out.push(`insert into public.hero_slides (heading, description, quote, featured_book_slug, sort) values (${j(h.heading)}, ${j(h.description)}, ${j(h.quote)}, ${q(h.featuredBookId)}, ${i});`)
+  out.push(`insert into public.hero_slides (heading, description, cta, sort) values (${j(h.heading)}, ${j(h.description)}, ${j(h.cta ? [h.cta] : [])}, ${i});`)
 );
 out.push("");
-["manifesto", "potd", "poetry", "dictionary", "stats", "poets", "library", "folk", "audio", "events", "newsletter", "cta"].forEach((k, i) =>
-  out.push(`insert into public.homepage_sections (key, enabled, sort) values (${q(k)}, true, ${(i + 1) * 10});`)
+// Rekhta-style default order; manifesto, stats and cta start hidden (switch on in Admin → Homepage builder)
+SECTION_KEYS.forEach((k, i) =>
+  out.push(`insert into public.homepage_sections (key, enabled, sort) values (${q(k)}, ${DEFAULT_SECTIONS.includes(k)}, ${(i + 1) * 10});`)
 );
 
 /* ── dictionary ── */

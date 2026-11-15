@@ -7,7 +7,7 @@ import { detectScript } from "@/lib/dictionary/normalize";
 import { page } from "@/lib/links";
 import { supabase } from "@/lib/db/client";
 import { Duplicates, ReviewQueue, Sources, WordEditor, WordList, WotdScheduler } from "./AdminEditing";
-import { ContentManager, DictionaryVisibility, HomepageBuilder, LanguageSettings, Subscribers, TableKey } from "@/components/admin/ContentCMS";
+import { ContentManager, DictionaryVisibility, HomepageBuilder, LanguageSettings, Messages, Subscribers, TableKey } from "@/components/admin/ContentCMS";
 import type { Session } from "@supabase/supabase-js";
 
 /**
@@ -25,7 +25,7 @@ const MENU = [
 const CONTENT_MENU = [
   ["authors", "Poets & authors"], ["poems", "Poetry"], ["books", "Books / library"], ["events", "Events & news"],
   ["folk_items", "Folk literature"], ["audio_items", "Audio poetry"], ["hero_slides", "Hero slider"],
-  ["homepage", "Homepage builder"], ["subscribers", "Newsletter"],
+  ["homepage", "Homepage builder"], ["subscribers", "Newsletter"], ["messages", "Messages"],
 ] as const;
 const SITE_MENU = [["languages", "Languages"], ["dict-visibility", "Dictionary visibility"]] as const;
 type Sec = (typeof MENU)[number][0] | (typeof CONTENT_MENU)[number][0] | (typeof SITE_MENU)[number][0] | "edit";
@@ -113,8 +113,8 @@ function SignIn() {
         <span className="nastaliq text-[28px] text-[var(--gold)]" lang="bal" style={{ lineHeight: 1.7 }}>لبزانک</span>
         <h1 className="mt-1 text-[22px] font-semibold">Admin sign-in</h1>
         <p className="mt-1 text-[13px] text-[var(--dim)]">Dictionary staff only. Accounts are created by a Super Admin in Supabase.</p>
-        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-6 w-full rounded-lg border border-[var(--faint)] bg-black/30 px-3 py-2.5 outline-none focus:border-[var(--gold)]/60" />
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="mt-3 w-full rounded-lg border border-[var(--faint)] bg-black/30 px-3 py-2.5 outline-none focus:border-[var(--gold)]/60" />
+        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="mt-6 w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2.5 outline-none focus:border-[var(--gold)]/60" />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="mt-3 w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2.5 outline-none focus:border-[var(--gold)]/60" />
         <button className="pill pill-gold mt-5 w-full justify-center disabled:opacity-50" disabled={busy}>{busy ? "…" : "Sign in"}</button>
         <button type="button" onClick={link} className="mt-3 w-full text-center text-[13px] text-[var(--dim)] hover:text-[var(--text)]">Email me a sign-in link instead</button>
         {msg && <p className="mt-4 text-[13px] text-[var(--gold-bright)]">{msg}</p>}
@@ -202,7 +202,7 @@ function AdminShell({ canImport, email, roles }: { canImport: boolean; email?: s
               <p className="mb-2 px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--dim)]">Literature</p>
               <nav className="mb-6 flex flex-row flex-wrap gap-1 md:flex-col">
                 {CONTENT_MENU.map(([k, label]) => (
-                  <a key={k} href={`#${k}`} className={`rounded-lg px-3 py-1.5 text-[14px] ${sec === k ? "bg-[var(--gold)]/15 text-[var(--gold-bright)]" : "text-[var(--dim)] hover:bg-white/5 hover:text-[var(--text)]"}`}>
+                  <a key={k} href={`#${k}`} className={`rounded-lg px-3 py-1.5 text-[14px] ${sec === k ? "bg-[var(--gold)]/15 text-[var(--gold-bright)]" : "text-[var(--dim)] hover:bg-[var(--ink-2)] hover:text-[var(--text)]"}`}>
                     {label}
                   </a>
                 ))}
@@ -214,7 +214,7 @@ function AdminShell({ canImport, email, roles }: { canImport: boolean; email?: s
               <p className="mb-2 px-3 text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--dim)]">Site</p>
               <nav className="mb-6 flex flex-row flex-wrap gap-1 md:flex-col">
                 {SITE_MENU.map(([k, label]) => (
-                  <a key={k} href={`#${k}`} className={`rounded-lg px-3 py-1.5 text-[14px] ${sec === k ? "bg-[var(--gold)]/15 text-[var(--gold-bright)]" : "text-[var(--dim)] hover:bg-white/5 hover:text-[var(--text)]"}`}>
+                  <a key={k} href={`#${k}`} className={`rounded-lg px-3 py-1.5 text-[14px] ${sec === k ? "bg-[var(--gold)]/15 text-[var(--gold-bright)]" : "text-[var(--dim)] hover:bg-[var(--ink-2)] hover:text-[var(--text)]"}`}>
                     {label}
                   </a>
                 ))}
@@ -227,7 +227,7 @@ function AdminShell({ canImport, email, roles }: { canImport: boolean; email?: s
               <a
                 key={k}
                 href={`#${k}`}
-                className={`flex items-center justify-between rounded-lg px-3 py-1.5 text-[14px] ${sec === k || (sec === "edit" && k === "words") ? "bg-[var(--gold)]/15 text-[var(--gold-bright)]" : "text-[var(--dim)] hover:bg-white/5 hover:text-[var(--text)]"}`}
+                className={`flex items-center justify-between rounded-lg px-3 py-1.5 text-[14px] ${sec === k || (sec === "edit" && k === "words") ? "bg-[var(--gold)]/15 text-[var(--gold-bright)]" : "text-[var(--dim)] hover:bg-[var(--ink-2)] hover:text-[var(--text)]"}`}
               >
                 {label}
                 {!supabase && !LOCAL_OK.includes(k) && <span className="ms-2 shrink-0 text-[9px] uppercase tracking-wider opacity-50">db</span>}
@@ -251,6 +251,7 @@ function AdminShell({ canImport, email, roles }: { canImport: boolean; email?: s
               {CONTENT_TABLES.includes(sec as TableKey) && (canContent ? <ContentManager table={sec as TableKey} /> : <Phase2 name="Literature (Admin or Editor role needed)" />)}
               {sec === "homepage" && (canContent ? <HomepageBuilder /> : <Phase2 name="Homepage (Admin or Editor role needed)" />)}
               {sec === "subscribers" && <Subscribers />}
+              {sec === "messages" && <Messages />}
               {sec === "languages" && (canSite ? <LanguageSettings /> : <Phase2 name="Languages (Admin role needed)" />)}
               {sec === "dict-visibility" && (canSite ? <DictionaryVisibility /> : <Phase2 name="Dictionary visibility (Admin role needed)" />)}
             </>
@@ -326,7 +327,7 @@ function Overview({ batches }: { batches: Batch[] }) {
         {langs.map(([l, n]) => (
           <div key={l} className="grid grid-cols-[170px_1fr_70px] items-center gap-3 text-[14px]">
             <span>{l}</span>
-            <span className="h-2 overflow-hidden rounded-full bg-white/10">
+            <span className="h-2 overflow-hidden rounded-full bg-[var(--ink-3)]">
               <span className="block h-full rounded-full bg-[var(--gold)]" style={{ width: `${(n / (st.senses || 1)) * 100}%` }} />
             </span>
             <span className="text-end text-[var(--dim)]">{n}/{st.senses}</span>
@@ -544,11 +545,11 @@ function Importer({ onImported }: { onImported: (b: Batch) => void }) {
             <h2 className="mb-3 font-semibold">Source and licence (required)</h2>
             <label className="mb-3 block text-[13px] text-[var(--dim)]">
               Source name
-              <input value={source} onChange={(e) => setSource(e.target.value)} placeholder="e.g. Labzank editorial, field notes 2026" className="mt-1 w-full rounded-lg border border-[var(--faint)] bg-black/30 px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--gold)]/60" />
+              <input value={source} onChange={(e) => setSource(e.target.value)} placeholder="e.g. Labzank editorial, field notes 2026" className="mt-1 w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--gold)]/60" />
             </label>
             <label className="mb-3 block text-[13px] text-[var(--dim)]">
               Licence and attribution
-              <input value={licence} onChange={(e) => setLicence(e.target.value)} placeholder="e.g. CC BY-SA 4.0 — credit: …" className="mt-1 w-full rounded-lg border border-[var(--faint)] bg-black/30 px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--gold)]/60" />
+              <input value={licence} onChange={(e) => setLicence(e.target.value)} placeholder="e.g. CC BY-SA 4.0 — credit: …" className="mt-1 w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2 text-[var(--text)] outline-none focus:border-[var(--gold)]/60" />
             </label>
             <label className="flex items-start gap-3 text-[13px]">
               <input type="checkbox" checked={permission} onChange={(e) => setPermission(e.target.checked)} className="mt-1" />
@@ -641,7 +642,7 @@ function Importer({ onImported }: { onImported: (b: Batch) => void }) {
                               onChange={(e) => editCell(ri, k, e.target.value)}
                               dir={rtl ? "rtl" : "ltr"}
                               lang={rtl ? "bal" : undefined}
-                              className="w-full min-w-[90px] rounded-md bg-transparent px-2 py-1 outline-none hover:bg-white/5 focus:bg-white/10 disabled:opacity-30"
+                              className="w-full min-w-[90px] rounded-md bg-transparent px-2 py-1 outline-none hover:bg-[var(--ink-2)] focus:bg-[var(--ink-3)] disabled:opacity-30"
                             />
                           </td>
                         );

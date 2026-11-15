@@ -12,8 +12,9 @@ import type { L } from "@/lib/i18n";
  * swaps in the published rows from the database.
  */
 
-export const SECTION_KEYS = ["manifesto", "potd", "poetry", "dictionary", "stats", "poets", "library", "folk", "audio", "events", "newsletter", "cta"] as const;
-export type SectionKey = (typeof SECTION_KEYS)[number];
+import { DEFAULT_SECTIONS, SECTION_KEYS, SectionKey } from "./sections";
+export { DEFAULT_SECTIONS, SECTION_KEYS };
+export type { SectionKey };
 
 export type Content = {
   poets: local.Poet[];
@@ -40,7 +41,7 @@ const initial: Content = {
   audio: local.audio,
   heroSlides: local.heroSlides,
   stats: local.stats,
-  sections: [...SECTION_KEYS],
+  sections: [...DEFAULT_SECTIONS],
   live: false,
   loaded: !supabase,
   error: "",
@@ -93,12 +94,16 @@ async function load(): Promise<Partial<Content>> {
   if (rows(f).length) out.folk = rows(f).map((r) => ({ title: r.title as L, body: r.body as L, glyph: (r.glyph as string) ?? "◆" }));
   if (rows(au).length) out.audio = rows(au).map((r) => ({ title: r.title as L, by: r.by_line as L, dur: (r.duration as string) ?? "", bars: [], src: mediaUrl("audio", r.audio_path as string), authorSlug: ids.get(r.author_id as number) }));
   if (rows(h).length)
-    out.heroSlides = rows(h).map((r) => ({
-      heading: r.heading as L,
-      description: (r.description as L) ?? { bal: "" },
-      quote: (r.quote as local.HeroQuote) ?? local.heroSlides[0].quote,
-      featuredBookId: (r.featured_book_slug as string) ?? local.heroSlides[0].featuredBookId,
-    }));
+    out.heroSlides = rows(h).map((r) => {
+      const cta = Array.isArray(r.cta) ? (r.cta[0] as { label?: L; href?: string } | undefined) : undefined;
+      return {
+        heading: r.heading as L,
+        description: (r.description as L) ?? { bal: "" },
+        image: mediaUrl("images", r.image_desktop_path as string),
+        imageMobile: mediaUrl("images", r.image_mobile_path as string),
+        cta: cta?.label?.bal && cta.href ? { label: cta.label, href: cta.href } : undefined,
+      };
+    });
   if (rows(s).length)
     out.sections = rows(s).filter((r) => r.enabled).map((r) => r.key as SectionKey).filter((k) => SECTION_KEYS.includes(k));
   const sd = st.data as Partial<typeof local.stats> | null;

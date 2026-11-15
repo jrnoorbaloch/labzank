@@ -1,19 +1,17 @@
-import SmoothScroll from "@/components/SmoothScroll";
 import Nav from "@/components/Nav";
-import ScrollFilm from "@/components/ScrollFilm";
+import HeroCarousel from "@/components/HeroCarousel";
 import BrandSections from "@/components/BrandSections";
 import SearchOverlay from "@/components/SearchOverlay";
 
 export default function Home() {
   return (
-    <SmoothScroll>
-      <div className="grain" aria-hidden />
+    <>
       <Nav />
       <main>
-        <ScrollFilm />
+        <HeroCarousel />
         <BrandSections />
       </main>
       <SearchOverlay />
-    </SmoothScroll>
+    </>
   );
 }

@@ -141,6 +141,11 @@ function SearchPanel({ go }: { go: (h: string) => void }) {
   const { t } = useLang();
   const pl = usePosLabel();
   const [q, setQ] = useState("");
+  // a search started elsewhere (e.g. the homepage box) arrives as dictionary.html#q=…
+  useEffect(() => {
+    const m = location.hash.match(/^#q=(.+)$/);
+    if (m) setQ(decodeURIComponent(m[1]));
+  }, []);
   const [kb, setKb] = useState(false);
   const [pos, setPos] = useState<Pos | "">("");
   const [hasBrh, setHasBrh] = useState(false);
@@ -199,7 +204,7 @@ function SearchPanel({ go }: { go: (h: string) => void }) {
           ev.preventDefault();
           if (results[0]) open(results[0]);
         }}
-        className="flex items-center gap-2 rounded-full border border-[var(--faint)] bg-black/30 p-2 ps-6 focus-within:border-[var(--gold)]/60"
+        className="flex items-center gap-2 rounded-full border border-[var(--faint)] bg-white p-2 ps-6 focus-within:border-[var(--gold)]/60"
       >
         <input
           ref={input}
@@ -563,7 +568,7 @@ export default function DictionaryApp() {
   const { t } = useLang();
   const [view, go] = useView();
   return (
-    <div className="mx-auto max-w-[1200px] px-[5vw] pb-24 pt-28">
+    <div className="mx-auto max-w-[1200px] px-[5vw] pb-24 pt-10">
       <header className="mb-10 flex flex-wrap items-end justify-between gap-6">
         <div>
           <a href="#" className="block">

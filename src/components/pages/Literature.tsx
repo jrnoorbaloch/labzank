@@ -45,7 +45,7 @@ function useTitle(title?: string) {
 
 function Shell({ kicker, title, children, tools }: { kicker?: string; title: ReactNode; children: ReactNode; tools?: ReactNode }) {
   return (
-    <div className="section pt-[clamp(110px,14vh,160px)]">
+    <div className="section pt-12">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
         <div>
           {kicker && <p className="kicker">{kicker}</p>}
@@ -66,7 +66,7 @@ function SearchBox({ q, setQ }: { q: string; setQ: (s: string) => void }) {
       onChange={(e) => setQ(e.target.value)}
       placeholder={t("pg.search")}
       aria-label={t("pg.search")}
-      className="w-[min(320px,100%)] rounded-full border border-[var(--faint)] bg-black/30 px-5 py-2.5 text-[15px] outline-none focus:border-[var(--gold)]/60"
+      className="w-[min(320px,100%)] rounded-full border border-[var(--faint)] bg-white px-5 py-2.5 text-[15px] outline-none focus:border-[var(--gold)]/60"
     />
   );
 }
@@ -200,7 +200,7 @@ function PoetDetail({ p }: { p: Poet }) {
   const theirBooks = books.filter((x) => x.authorSlug === p.slug);
   const theirAudio = audio.filter((x) => x.authorSlug === p.slug);
   return (
-    <div className="section pt-[clamp(110px,14vh,160px)]">
+    <div className="section pt-12">
       <Back href={page("poets")} label={t("nav.poets")} />
       <div className="card relative grid items-center gap-10 overflow-hidden p-8 md:grid-cols-[auto_1fr] md:p-14">
         <div className="doch-bg edge-fade absolute inset-y-0 end-0 w-1/3 opacity-30" />
@@ -316,7 +316,7 @@ function PoemDetail({ p }: { p: Poem }) {
   const shownTr = langs.includes(tr) ? tr : langs[0];
   const more = [...poems.filter((x) => x.id !== p.id && x.authorSlug && x.authorSlug === p.authorSlug), ...poems.filter((x) => x.id !== p.id && (!x.authorSlug || x.authorSlug !== p.authorSlug))].slice(0, 3);
   return (
-    <div className="section pt-[clamp(110px,14vh,160px)]">
+    <div className="section pt-12">
       <Back href={page("poetry")} label={t("nav.poetry")} />
       <article className="card relative overflow-hidden px-6 py-12 md:px-16 md:py-16">
         <div className="doch-bg edge-fade absolute inset-x-0 top-0 h-40 opacity-20" />
@@ -433,12 +433,12 @@ function BookDetail({ b }: { b: Book }) {
     ...(b.isbn ? [["ISBN", <Latin key="i">{b.isbn}</Latin>] as [string, ReactNode]] : []),
   ];
   return (
-    <div className="section pt-[clamp(110px,14vh,160px)]">
+    <div className="section pt-12">
       <Back href={page("library")} label={t("nav.books")} />
       <div className="grid gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:gap-16">
         <div className="mx-auto w-full max-w-[320px]"><Cover b={b} /></div>
         <div>
-          {b.demo && <span className="rounded-full border border-white/20 px-3 py-0.5 text-[12px] text-[var(--dim)]">{t("pg.demoBook")}</span>}
+          {b.demo && <span className="rounded-full border border-black/15 px-3 py-0.5 text-[12px] text-[var(--dim)]">{t("pg.demoBook")}</span>}
           <Tx v={b.title} as="h1" className="display h2 mt-3" />
           {b.title["bal-latn"] && <p className="mt-1 font-[family-name:var(--latin-display)] text-[20px] italic text-[var(--gold)]/80 rtl:text-right" lang="bal-Latn" dir="ltr">{b.title["bal-latn"]}</p>}
           <div className="mt-6 flex items-center gap-3">

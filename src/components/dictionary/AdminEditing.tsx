@@ -46,17 +46,17 @@ async function rpc<T = AnyRow>(fn: string, args: AnyRow = {}): Promise<T | null>
 
 export function StatusChip({ s }: { s: string }) {
   const tone: Record<string, string> = {
-    draft: "border-white/20 text-[var(--dim)]",
+    draft: "border-black/15 text-[var(--dim)]",
     imported: "border-sky-400/40 text-sky-300",
-    pending_review: "border-amber-400/50 text-amber-300",
-    verified: "border-emerald-400/50 text-emerald-300",
+    pending_review: "border-amber-400/50 text-amber-700",
+    verified: "border-emerald-400/50 text-emerald-700",
     published: "border-[var(--gold)] text-[var(--gold-bright)]",
     rejected: "border-[var(--rust)] text-[var(--rust)]",
   };
   return <span className={`inline-block whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[11px] ${tone[s] ?? ""}`}>{s.replace("_", " ")}</span>;
 }
 
-const inputCls = "w-full rounded-lg border border-[var(--faint)] bg-black/30 px-3 py-2 outline-none focus:border-[var(--gold)]/60";
+const inputCls = "w-full rounded-lg border border-[var(--faint)] bg-white px-3 py-2 outline-none focus:border-[var(--gold)]/60";
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
@@ -87,7 +87,7 @@ function WordPicker({ onPick, placeholder = "Find a word…", exclude }: { onPic
       {open && hits.length > 0 && (
         <div className="absolute inset-x-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-lg border border-[var(--faint)] bg-[var(--ink-2)] p-1 shadow-2xl">
           {hits.map((w) => (
-            <button key={w.slug} type="button" onClick={() => { onPick(w); setQ(""); setOpen(false); }} className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-1.5 text-start hover:bg-white/5">
+            <button key={w.slug} type="button" onClick={() => { onPick(w); setQ(""); setOpen(false); }} className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-1.5 text-start hover:bg-[var(--ink-2)]">
               <span><span lang="bal" className="me-2 text-[17px]">{w.arab}</span><span className="italic text-[var(--gold-bright)]">{w.latn}</span></span>
               <StatusChip s={w.status} />
             </button>
@@ -142,13 +142,13 @@ export function WordList({ initialStatus = "" }: { initialStatus?: Status | "" }
           </thead>
           <tbody>
             {data.rows.map((w) => (
-              <tr key={w.slug} className="cursor-pointer border-t border-[var(--faint)] hover:bg-white/[0.03]" onClick={() => (location.hash = `edit-${w.slug}`)}>
+              <tr key={w.slug} className="cursor-pointer border-t border-[var(--faint)] hover:bg-[var(--ink-2)]" onClick={() => (location.hash = `edit-${w.slug}`)}>
                 <td className="px-4 py-2.5"><span lang="bal" className="text-[19px]">{w.arab}</span></td>
                 <td className="px-4 py-2.5 italic text-[var(--gold-bright)]">{w.latn}</td>
                 <td className="px-4 py-2.5">{w.senses}</td>
                 <td className="px-4 py-2.5">
                   {["bal", "en", "ur", "brh"].map((l) => (
-                    <span key={l} className={`me-1 inline-block rounded px-1.5 text-[10px] uppercase ${w.langs.includes(l) ? "bg-[var(--gold)]/20 text-[var(--gold-bright)]" : "bg-white/5 text-[var(--dim)]/50 line-through"}`}>{l}</span>
+                    <span key={l} className={`me-1 inline-block rounded px-1.5 text-[10px] uppercase ${w.langs.includes(l) ? "bg-[var(--gold)]/20 text-[var(--gold-bright)]" : "bg-[var(--ink-2)] text-[var(--dim)]/50 line-through"}`}>{l}</span>
                   ))}
                 </td>
                 <td className="px-4 py-2.5"><StatusChip s={w.status} /></td>
@@ -303,7 +303,7 @@ export function WordEditor({ slug, roles }: { slug?: string; roles: string[] }) 
           <h1 className="text-[28px] font-semibold tracking-tight">{slug ? "Edit word" : "Add new word"}</h1>
           {meta && <StatusChip s={status} />}
           {meta && <span className="text-[12px] text-[var(--dim)]">{meta.id} · v{meta.version}</span>}
-          {dirty && <span className="text-[12px] text-amber-300">Unsaved changes</span>}
+          {dirty && <span className="text-[12px] text-amber-700">Unsaved changes</span>}
         </div>
         {!canStructure && <p className="card mb-4 p-4 text-[13px] text-[var(--dim)]">Translator access: you can change the meanings of existing senses. Headword, senses, examples and relations are read-only for you.</p>}
 
@@ -458,7 +458,7 @@ export function WordEditor({ slug, roles }: { slug?: string; roles: string[] }) 
             <ul className="flex flex-col gap-2 text-[13px]">
               {(meta.reviews ?? []).map((r: AnyRow, i: number) => (
                 <li key={i} className="border-b border-[var(--faint)] pb-2">
-                  <span className={r.decision === "approve" ? "text-emerald-300" : r.decision === "reject" ? "text-[var(--rust)]" : "text-amber-300"}>{r.decision.replace("_", " ")}</span>
+                  <span className={r.decision === "approve" ? "text-emerald-700" : r.decision === "reject" ? "text-[var(--rust)]" : "text-amber-700"}>{r.decision.replace("_", " ")}</span>
                   <span className="text-[var(--dim)]"> · {r.stage} · {r.by ?? "?"} · {new Date(r.at).toLocaleString("en-GB")}</span>
                   {r.note && <p className="mt-0.5 text-[var(--text)]/80">“{r.note}”</p>}
                 </li>

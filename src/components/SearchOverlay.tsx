@@ -5,7 +5,7 @@ import { L, Tx, useLang } from "@/lib/i18n";
 import { useContent } from "@/lib/content-store";
 import { repo } from "@/lib/dictionary/repo";
 import type { Entry } from "@/lib/dictionary/data";
-import { SearchIcon } from "./ScrollFilm";
+import { SearchIcon } from "./search";
 import { page } from "@/lib/links";
 
 type Hit = { type: "poet" | "poem" | "book" | "word"; title: L; sub?: L; href: string };
@@ -92,7 +92,7 @@ export default function SearchOverlay() {
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/70 p-4 pt-[12vh] backdrop-blur-md" onClick={() => setOpen(false)} role="dialog" aria-modal="true" aria-label={t("nav.search")}>
+    <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/40 p-4 pt-[12vh] backdrop-blur-sm" onClick={() => setOpen(false)} role="dialog" aria-modal="true" aria-label={t("nav.search")}>
       <div className="w-full max-w-[680px] overflow-hidden rounded-2xl border border-[var(--faint)] bg-[var(--ink-2)] shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-[var(--faint)] px-5 py-4">
           <SearchIcon />
@@ -114,7 +114,7 @@ export default function SearchOverlay() {
           )}
           {q && hits.length === 0 && <p className="p-6 text-center text-[var(--dim)]">{t("ui.noResults")}</p>}
           {hits.map((h, i) => (
-            <a key={i} href={h.href} onClick={() => setOpen(false)} className="flex items-center justify-between gap-4 rounded-xl px-4 py-3 hover:bg-white/5">
+            <a key={i} href={h.href} onClick={() => setOpen(false)} className="flex items-center justify-between gap-4 rounded-xl px-4 py-3 hover:bg-[var(--ink-2)]">
               <span className="min-w-0">
                 <Tx v={h.title} className="block truncate text-[16px]" />
                 {h.sub && <Tx v={h.sub} className="block truncate text-[13px] text-[var(--dim)]" />}

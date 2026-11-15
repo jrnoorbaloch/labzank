@@ -38,20 +38,23 @@ insert into public.folk_items (title, body, glyph, sort, status) values ('{"bal"
 insert into public.audio_items (title, by_line, duration, sort, status) values ('{"bal":"ماہ ءِ رُژن","bal-latn":"Máh é ruzhn","en":"Moonlight (recitation)","ur":"چاندنی (قرأت)"}'::jsonb, '{"bal":"شاہمیر (ڈیمو)","bal-latn":"Sháhmir (demo)","en":"Shahmir (demo)","ur":"شاہمیر (ڈیمو)"}'::jsonb, '3:42', 0, 'published');
 insert into public.audio_items (title, by_line, duration, sort, status) values ('{"bal":"زہیروک ءِ توار","bal-latn":"Zahirók é tawár","en":"A Zahirok melody","ur":"زہیروک کی دھن"}'::jsonb, '{"bal":"دودی ریکارڈ (ڈیمو)","bal-latn":"Folk archive (demo)","en":"Folk archive (demo)","ur":"لوک آرکائیو (ڈیمو)"}'::jsonb, '5:10', 1, 'published');
 insert into public.audio_items (title, by_line, duration, sort, status) values ('{"bal":"شاعر ءِ گوں گپ","bal-latn":"Shá''er é gón gap","en":"In conversation with a poet","ur":"شاعر سے گفتگو"}'::jsonb, '{"bal":"لبزانک دیوان (ڈیمو)","bal-latn":"Labzánk Diwán (demo)","en":"Labzank Diwan (demo)","ur":"لبزانک دیوان (ڈیمو)"}'::jsonb, '18:05', 2, 'published');
-insert into public.hero_slides (heading, description, quote, featured_book_slug, sort) values ('{"bal":"بلوچی لبزانک ءِ گنج، یک جاہ ءَ","bal-latn":"Balòchi labzánk é ganj, yak jáhá","en":"The treasury of Balochi literature, in one place","ur":"بلوچی ادب کا خزانہ، ایک جگہ"}'::jsonb, '{"bal":"شاعر، شعر، کتاب، آزمانک ءُ توار — بلوچی، انگریزی ءُ اردو ءَ.","bal-latn":"Shá''er, shé''r, ketáb, ázmánk o tawár — Balòchi, Angrézi o Urdu á.","en":"Poets, poems, books, stories and recordings — in Balochi, English and Urdu.","ur":"شعرا، اشعار، کتب، افسانے اور آوازیں — بلوچی، انگریزی اور اردو میں۔"}'::jsonb, '{"text":"گوات کوہاں گوں گپ جنت","roman":"Gwát kóhán gón gap jant","credit":{"bal":"نمونہ","bal-latn":"Namúna","en":"Sample verse","ur":"نمونہ"}}'::jsonb, 'sayad-ganj', 0);
+insert into public.hero_slides (heading, description, cta, sort) values ('{"bal":"بلوچی شاعری ءِ گنج","bal-latn":"Balòchi shá''eri é ganj","en":"The treasury of Balochi poetry","ur":"بلوچی شاعری کا خزانہ"}'::jsonb, '{"bal":"کوہنیں ءُ نوکیں شعر، اصل بلوچی ءَ — رومن ءُ رجانک ءِ همراہ.","bal-latn":"Kóhnén o nókén shé''r, asl Balòchi á — Roman o rajánk é hamráh.","en":"Classical and modern verse in the original Balochi, with Roman script and translations.","ur":"کلاسیکی اور جدید شاعری اصل بلوچی میں — رومن اور ترجمے کے ساتھ۔"}'::jsonb, '[{"label":{"bal":"شعر بوانیں","bal-latn":"Shé''r bewánén","en":"Read poetry","ur":"شاعری پڑھیں"},"href":"@poetry"}]'::jsonb, 0);
+insert into public.hero_slides (heading, description, cta, sort) values ('{"bal":"بلوچی لبزبلد","bal-latn":"Balòchi labzbald","en":"The Balochi dictionary","ur":"بلوچی لغت"}'::jsonb, '{"bal":"لبز ءَ عربی یا لاتینی سیاہگ ءَ شوہاز کن — انگریزی، اردو ءُ براہوئی معنا.","bal-latn":"Labzá Arabi yá Látini siáhagá shóház kan — Angrézi, Urdu o Bráhui ma''ná.","en":"Search in Arabic or Latin script, with English, Urdu and Brahui meanings.","ur":"عربی یا لاطینی رسم الخط میں تلاش کریں — انگریزی، اردو اور براہوی معنی کے ساتھ۔"}'::jsonb, '[{"label":{"bal":"لبزبلد ءَ پچ کن","bal-latn":"Labzbaldá pach kan","en":"Open dictionary","ur":"لغت کھولیں"},"href":"@dictionary"}]'::jsonb, 1);
+insert into public.hero_slides (heading, description, cta, sort) values ('{"bal":"بلوچی کتابانی کتابجاہ","bal-latn":"Balòchi ketábáni ketábjáh","en":"A library of Balochi books","ur":"بلوچی کتابوں کا کتب خانہ"}'::jsonb, '{"bal":"شاعری، تاریخ، زبان ءُ دود — اجازت ءِ همراہ آنلائن وانگ.","bal-latn":"Shá''eri, tárikh, zabán o dód — ejázat é hamráh online wánag.","en":"Poetry, history, language and culture — read online where the rights allow.","ur":"شاعری، تاریخ، زبان اور ثقافت — جہاں اجازت ہو وہاں آن لائن پڑھیں۔"}'::jsonb, '[{"label":{"bal":"کتابجاہ ءَ بچار","bal-latn":"Ketábjáhá bechár","en":"Browse the library","ur":"کتب خانہ دیکھیں"},"href":"@library"}]'::jsonb, 2);
+insert into public.hero_slides (heading, description, cta, sort) values ('{"bal":"دودی لبزانک ءُ میراث","bal-latn":"Dódi labzánk o mirás","en":"Folk literature & heritage","ur":"لوک ادب اور ورثہ"}'::jsonb, '{"bal":"شیر، داستان، گیدی ءُ لیکو — مردمانی زبان ءِ گنج.","bal-latn":"Shér, dástán, gidi o léko — mardománi zabán é ganj.","en":"Ballads, epics and songs carried by the people of Balochistan.","ur":"بلوچستان کے لوگوں کی زبان پر زندہ گیت، داستانیں اور نغمے۔"}'::jsonb, '[{"label":{"bal":"گیشتر بزان","bal-latn":"Géshtar bezán","en":"Explore heritage","ur":"مزید جانیں"},"href":"#folk"}]'::jsonb, 3);
 
-insert into public.homepage_sections (key, enabled, sort) values ('manifesto', true, 10);
-insert into public.homepage_sections (key, enabled, sort) values ('potd', true, 20);
-insert into public.homepage_sections (key, enabled, sort) values ('poetry', true, 30);
-insert into public.homepage_sections (key, enabled, sort) values ('dictionary', true, 40);
-insert into public.homepage_sections (key, enabled, sort) values ('stats', true, 50);
-insert into public.homepage_sections (key, enabled, sort) values ('poets', true, 60);
+insert into public.homepage_sections (key, enabled, sort) values ('poetry', true, 10);
+insert into public.homepage_sections (key, enabled, sort) values ('audio', true, 20);
+insert into public.homepage_sections (key, enabled, sort) values ('dictionary', true, 30);
+insert into public.homepage_sections (key, enabled, sort) values ('potd', true, 40);
+insert into public.homepage_sections (key, enabled, sort) values ('poets', true, 50);
+insert into public.homepage_sections (key, enabled, sort) values ('stats', false, 60);
 insert into public.homepage_sections (key, enabled, sort) values ('library', true, 70);
-insert into public.homepage_sections (key, enabled, sort) values ('folk', true, 80);
-insert into public.homepage_sections (key, enabled, sort) values ('audio', true, 90);
-insert into public.homepage_sections (key, enabled, sort) values ('events', true, 100);
+insert into public.homepage_sections (key, enabled, sort) values ('events', true, 80);
+insert into public.homepage_sections (key, enabled, sort) values ('folk', true, 90);
+insert into public.homepage_sections (key, enabled, sort) values ('manifesto', false, 100);
 insert into public.homepage_sections (key, enabled, sort) values ('newsletter', true, 110);
-insert into public.homepage_sections (key, enabled, sort) values ('cta', true, 120);
+insert into public.homepage_sections (key, enabled, sort) values ('cta', false, 120);
 
 -- dictionary: 30 ORIGINAL sample entries, status draft (not Labzganj data)
 insert into public.dict_sources (id, name, licence, attribution, url) values ('labzank-editorial', 'Labzank editorial (sample)', 'CC BY-SA 4.0 (proposed)', 'Labzank editors — draft, not yet verified', null);
