@@ -47,14 +47,15 @@ insert into public.homepage_sections (key, enabled, sort) values ('poetry', true
 insert into public.homepage_sections (key, enabled, sort) values ('audio', true, 20);
 insert into public.homepage_sections (key, enabled, sort) values ('dictionary', true, 30);
 insert into public.homepage_sections (key, enabled, sort) values ('potd', true, 40);
-insert into public.homepage_sections (key, enabled, sort) values ('poets', true, 50);
-insert into public.homepage_sections (key, enabled, sort) values ('stats', false, 60);
-insert into public.homepage_sections (key, enabled, sort) values ('library', true, 70);
-insert into public.homepage_sections (key, enabled, sort) values ('events', true, 80);
-insert into public.homepage_sections (key, enabled, sort) values ('folk', true, 90);
-insert into public.homepage_sections (key, enabled, sort) values ('manifesto', false, 100);
-insert into public.homepage_sections (key, enabled, sort) values ('newsletter', true, 110);
-insert into public.homepage_sections (key, enabled, sort) values ('cta', false, 120);
+insert into public.homepage_sections (key, enabled, sort) values ('history', true, 50);
+insert into public.homepage_sections (key, enabled, sort) values ('poets', true, 60);
+insert into public.homepage_sections (key, enabled, sort) values ('stats', false, 70);
+insert into public.homepage_sections (key, enabled, sort) values ('library', true, 80);
+insert into public.homepage_sections (key, enabled, sort) values ('events', true, 90);
+insert into public.homepage_sections (key, enabled, sort) values ('folk', true, 100);
+insert into public.homepage_sections (key, enabled, sort) values ('manifesto', false, 110);
+insert into public.homepage_sections (key, enabled, sort) values ('newsletter', true, 120);
+insert into public.homepage_sections (key, enabled, sort) values ('cta', false, 130);
 
 -- dictionary: 30 ORIGINAL sample entries, status draft (not Labzganj data)
 insert into public.dict_sources (id, name, licence, attribution, url) values ('labzank-editorial', 'Labzaank editorial (sample)', 'CC BY-SA 4.0 (proposed)', 'Labzaank editors — draft, not yet verified', null);

@@ -341,6 +341,11 @@ export const dict = {
   "f.sent": { bal: "منت وار — تئی کلوہ رسِت.", "bal-latn": "Mennatwár — tai kolawh raset.", en: "Thank you — your message has been sent.", ur: "شکریہ — آپ کا پیغام بھیج دیا گیا۔" },
   "f.agree": { bal: "من لبزانک ءِ نوکیں ہال زیرگ ءَ منّاں", "bal-latn": "Man Labzaank é nókén hál zirag á mannán", en: "I agree to receive the Labzaank newsletter", ur: "میں لبزانک نیوز لیٹر وصول کرنے سے متفق ہوں" },
   "f.follow": { bal: "مئے گوں بہ بئے", "bal-latn": "Mai gón bebay", en: "Follow us", ur: "ہمیں فالو کریں" },
+  "hist.k": { bal: "بلوچی لبزانک ءِ تاریخ", "bal-latn": "Balòchi labzánk é tárikh", en: "Balochi literature through the ages", ur: "بلوچی ادب صدیوں کے آئینے میں" },
+  "hist.h": { bal: "توارانی آسمان", "bal-latn": "Tawárání ásmán", en: "A sky of voices", ur: "آوازوں کا آسمان" },
+  "hist.p": { bal: "ہر استار یک شاعرے — کوہنیں دور ءَ چہ مروچی ءَ. استار ءَ ٹک بجن ءُ آئی ءِ بارءَ بوان.", "bal-latn": "Har estár yak shá'eré — kóhnén daurá cha marochíá. Estárá tak bejan o ái é bárá bewán.", en: "Each star is a poet, from the classical age to today. Tap a star to read about them.", ur: "ہر ستارہ ایک شاعر ہے — کلاسیکی دور سے آج تک۔ ستارے پر ٹیپ کر کے ان کے بارے میں پڑھیں۔" },
+  "hist.contemporary": { bal: "مروچی", "bal-latn": "Marochí", en: "Contemporary", ur: "عصرِ حاضر" },
+  "hist.open": { bal: "پروفائل ءَ بچار", "bal-latn": "Profailá bechár", en: "Open profile", ur: "پروفائل دیکھیں" },
 } satisfies Record<string, E>;
 
 export type DictKey = keyof typeof dict;

@@ -16,6 +16,11 @@ import { repo } from "@/lib/dictionary/repo";
 import { page } from "@/lib/links";
 import { bookPdfUrl } from "@/lib/media";
 import { openSearch } from "./search";
+import HistorySky from "./HistorySky";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 import Logo from "./Logo";
 
 /* ─────────────────────────── shared pieces ─────────────────────────── */
@@ -98,7 +103,7 @@ export function ReadPdf({ path, label, className = "text-[var(--gold)] hover:und
 
 function Title({ children, sub }: { children: ReactNode; sub?: ReactNode }) {
   return (
-    <div className="mb-8">
+    <div className="mb-8" data-anim>
       <h2 className="sec-title">{children}</h2>
       {sub && <p className="sec-sub">{sub}</p>}
     </div>
@@ -145,7 +150,7 @@ function Rail({ children, itemClass = "w-[46%] sm:w-[31%] lg:w-[23%]" }: { child
       {!edge.start && <div className="hidden md:block"><Arrow dir="prev" onClick={() => by(-1)} label="Previous" /></div>}
       <div ref={ref} onScroll={update} className="no-scrollbar flex flex-1 snap-x gap-5 overflow-x-auto scroll-smooth pb-2" data-rail>
         {children.map((c, i) => (
-          <div key={i} className={`shrink-0 snap-start ${itemClass}`}>{c}</div>
+          <div key={i} className={`shrink-0 snap-start ${itemClass}`} data-anim>{c}</div>
         ))}
       </div>
       <div className="hidden md:block"><Arrow dir="next" onClick={() => by(1)} disabled={edge.end} label="Next" /></div>
@@ -442,7 +447,7 @@ function Events() {
       <Title>{t("h.events")}</Title>
       <div className="grid gap-5 md:grid-cols-3">
         {events.map((e, i) => (
-          <article key={i} className="flex gap-4 rounded-md border border-[var(--faint)] bg-white p-5 shadow-sm">
+          <article key={i} data-anim className="flex gap-4 rounded-md border border-[var(--faint)] bg-white p-5 shadow-sm">
             <div className="w-16 shrink-0 rounded-md bg-[var(--ink-2)] py-2 text-center">
               <span className={`block text-[26px] font-semibold leading-none text-[var(--gold)] ${latin}`} dir="ltr">{e.day}</span>
               <Tx v={e.month} className="mt-1 block text-[11px] text-[var(--dim)]" />
@@ -634,12 +639,33 @@ function Footer() {
 /* ─────────────────────────── assembly ─────────────────────────── */
 
 const SECTIONS: Record<SectionKey, () => ReactNode> = {
-  poetry: TopPoetry, audio: Recent, dictionary: WordOfDay, potd: TodaysSpecial, poets: RecommendedPoets,
+  poetry: TopPoetry, audio: Recent, dictionary: WordOfDay, potd: TodaysSpecial, history: HistorySky, poets: RecommendedPoets,
   stats: Stats, library: Library, events: Events, folk: Folk, manifesto: Manifesto, newsletter: Newsletter, cta: ClosingCta,
 };
 
+/** GSAP: titles and cards rise in as they enter the viewport (batched; skipped for reduced motion). */
+function useReveal(dep: unknown) {
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = gsap.context(() => {
+      const els = gsap.utils.toArray<HTMLElement>("main [data-anim]:not([data-anim-done])");
+      gsap.set(els, { opacity: 0, y: 28 });
+      ScrollTrigger.batch(els, {
+        start: "top 90%",
+        once: true,
+        onEnter: (batch) => {
+          batch.forEach((el) => el.setAttribute("data-anim-done", ""));
+          gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, stagger: 0.08, ease: "power3.out", overwrite: true });
+        },
+      });
+    });
+    return () => ctx.revert();
+  }, [dep]);
+}
+
 export default function BrandSections() {
-  const { sections } = useContent();
+  const { sections, loaded } = useContent();
+  useReveal(`${sections.join()}|${loaded}`);
   return (
     <div>
       {sections.map((k) => {

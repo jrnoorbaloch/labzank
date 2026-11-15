@@ -168,3 +168,8 @@ html[dir="rtl"] .sec-link { font-family: var(--arabic-body); letter-spacing: 0; 
 .arrow-btn:hover { color: var(--gold); border-color: var(--gold); }
 .arrow-btn:disabled { opacity: .35; cursor: default; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+/* constellation twinkle + GSAP reveal start state (only when JS animations will run) */
+@keyframes hs-twinkle { 0%, 100% { opacity: .85; } 50% { opacity: .12; } }
+.hs-twinkle { animation: hs-twinkle 3.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .hs-twinkle { animation: none; } }

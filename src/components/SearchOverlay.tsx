@@ -34,6 +34,10 @@ export default function SearchOverlay() {
   const { t } = useLang();
   const { poets, poems, books } = useContent();
   const [open, setOpen] = useState(false);
+  // let the smooth-scroll layer pause page scrolling while the overlay is open
+  useEffect(() => {
+    dispatchEvent(new CustomEvent("labzaank:search-open", { detail: open }));
+  }, [open]);
   const [q, setQ] = useState("");
   const input = useRef<HTMLInputElement>(null);
 

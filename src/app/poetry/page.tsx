@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Nav from "@/components/Nav";
+import SmoothScroll from "@/components/SmoothScroll";
 import SearchOverlay from "@/components/SearchOverlay";
 import { PoetryPage } from "@/components/pages/Literature";
 
@@ -11,13 +12,13 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <>
+    <SmoothScroll>
       <div className="grain" aria-hidden />
       <Nav onHome={false} active="nav.poetry" />
       <main>
         <PoetryPage />
       </main>
       <SearchOverlay />
-    </>
+    </SmoothScroll>
   );
 }
