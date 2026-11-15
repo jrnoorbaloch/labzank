@@ -619,7 +619,12 @@ function Footer() {
           <span className="nastaliq text-[20px] text-[#e9c27a]" lang="bal" style={{ lineHeight: 1.6 }}>لبزانک</span>
           <span lang="en" dir="ltr" className={latin}>© 2026 Labzank</span>
         </span>
-        <span className="max-w-[70ch]">{t("f.fine")}</span>
+        <span className="max-w-[70ch]">
+          {t("f.fine")}
+          <span className={`mt-1 block text-[11px] text-white/40 ${latin}`} lang="en" dir="ltr">
+            Nastaliq type: <a href="https://github.com/abbassiddiqi/mehr" className="underline hover:text-white/70" target="_blank" rel="noopener">Mehr Nastaliq Web</a> by Muhammad Zeeshan Nasar after the calligraphy of Nasrullah Mehr, <a href="https://creativecommons.org/licenses/by-sa/4.0/" className="underline hover:text-white/70" target="_blank" rel="noopener">CC BY-SA 4.0</a>
+          </span>
+        </span>
       </div>
     </footer>
   );

@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Mehr Nastaliq Web (CC BY-SA 4.0) — Urdu/Balochi Nastaliq, the face Rekhta uses.
+   Limited to Arabic-script ranges so Latin text keeps its own fonts; missing glyphs fall back to Noto Nastaliq. */
+@font-face {
+  font-family: "Mehr Nastaliq";
+  src: url("../fonts/mehr-nastaliq.woff2") format("woff2");
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
+}
+
 :root {
   /* light theme: paper background, ink text, Balochi gold accent */
   --ink: #ffffff;
@@ -14,8 +23,8 @@
   --faint: rgba(31, 27, 22, 0.11);
   --band: #2b2723; /* dark strip for newsletter + footer */
 
-  --arabic-display: "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
-  --arabic-body: "Noto Naskh Arabic", "Noto Nastaliq Urdu", serif;
+  --arabic-display: "Mehr Nastaliq", "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
+  --arabic-body: "Mehr Nastaliq", "Noto Nastaliq Urdu", "Noto Naskh Arabic", serif;
   --latin-display: "Fraunces", Georgia, serif;
   --latin-body: "Inter", system-ui, sans-serif;
 
