@@ -26,6 +26,7 @@ export type Content = {
   heroSlides: typeof local.heroSlides;
   articles: local.Article[];
   videos: local.Video[];
+  prose: local.Prose[];
   stats: typeof local.stats;
   sections: SectionKey[];
   live: boolean;
@@ -44,6 +45,7 @@ const initial: Content = {
   heroSlides: local.heroSlides,
   articles: local.articles,
   videos: local.videos,
+  prose: local.prose,
   stats: local.stats,
   sections: [...DEFAULT_SECTIONS],
   live: false,
@@ -88,9 +90,10 @@ async function load(): Promise<Partial<Content>> {
   const err = [a, p, b, e, f, au, h, s, st].find((r) => r.error)?.error;
   if (err) throw err;
   // newer modules: a missing table (migration not applied yet) must not break the page
-  const [ar, vi] = await Promise.all([
+  const [ar, vi, pr] = await Promise.all([
     db.from("articles").select("slug, title, excerpt, cover_path, category, tags, author_id, author_text, published_at").eq("status", "published").order("published_at", { ascending: false }).limit(60),
     pub("videos"),
+    db.from("prose").select("slug, kind, title, excerpt, cover_path, author_id, author_text, published_at").eq("status", "published").order("sort").order("published_at", { ascending: false }).limit(200),
   ]);
   const rows = (r: { data: unknown }) => (r.data ?? []) as Row[];
   const out: Partial<Content> = { live: true };
@@ -100,6 +103,11 @@ async function load(): Promise<Partial<Content>> {
   if (!ar.error) out.articles = rows(ar).map((r) => ({
     slug: r.slug as string, title: r.title as L, excerpt: (r.excerpt as L) ?? { bal: "" }, category: (r.category as string) ?? "news",
     tags: (r.tags as string[]) ?? [], cover: mediaUrl("images", r.cover_path as string), authorSlug: ids.get(r.author_id as number),
+    authorText: (r.author_text as L) ?? undefined, date: (r.published_at as string) ?? undefined,
+  }));
+  if (!pr.error) out.prose = rows(pr).map((r) => ({
+    slug: r.slug as string, kind: (r.kind as string) ?? "other", title: r.title as L, excerpt: (r.excerpt as L) ?? { bal: "" },
+    cover: mediaUrl("images", r.cover_path as string), authorSlug: ids.get(r.author_id as number),
     authorText: (r.author_text as L) ?? undefined, date: (r.published_at as string) ?? undefined,
   }));
   if (!vi.error) out.videos = rows(vi).map((r) => ({

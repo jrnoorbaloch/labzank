@@ -7,7 +7,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { L, Tx, useLang } from "@/lib/i18n";
-import { Article, articleCats, articles as localArticles, Video } from "@/lib/content";
+import { Article, articleCats, articles as localArticles, Prose, prose as localProse, Video } from "@/lib/content";
+import { proseKind } from "@/lib/forms";
 import { useContent } from "@/lib/content-store";
 import { supabase } from "@/lib/db/client";
 import { page } from "@/lib/links";
@@ -190,6 +191,144 @@ function ArticleDetail({ a }: { a: Article }) {
         <div className="mx-auto max-w-[1100px]">
           <SectionTitle>{t("art.related")}</SectionTitle>
           <div className="grid gap-6 md:grid-cols-3">{related.map((x) => <ArticleCard key={x.slug} a={x} />)}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────── prose (afsana, essay, …) ─────────────────────────── */
+
+export function ProseCard({ x, compact = false }: { x: Prose; compact?: boolean }) {
+  const { t } = useLang();
+  const { poets } = useContent();
+  const author = poets.find((p) => p.slug === x.authorSlug)?.name ?? x.authorText;
+  return (
+    <a href={page("prose", x.slug)} className="group flex h-full flex-col overflow-hidden rounded-md border border-[var(--faint)] bg-white shadow-sm transition hover:shadow-md" data-prose-card>
+      {!compact && (
+        <div className="relative aspect-[16/9] shrink-0 overflow-hidden bg-[var(--ink-3)]">
+          {x.cover ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={x.cover} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" />
+          ) : (
+            <div className="doch-bg absolute inset-0 grid place-items-center opacity-80"><Tx v={x.title} className="nastaliq px-6 text-center text-[22px] text-[var(--gold)]" /></div>
+          )}
+        </div>
+      )}
+      <div className="flex flex-1 flex-col p-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)] rtl:text-[13px] rtl:normal-case rtl:tracking-normal"><Tx v={proseKind(x.kind).l} /></p>
+        <Tx v={x.title} as="h3" className="mt-2 text-[18px] font-semibold leading-snug group-hover:text-[var(--gold)]" />
+        <Tx v={x.excerpt} as="p" className="mt-2 line-clamp-3 flex-1 text-[14px] leading-relaxed text-[var(--dim)]" />
+        <p className="mt-4 flex items-center justify-between gap-3 text-[12px] text-[var(--dim)]">
+          {author ? <Tx v={author} /> : <span />}
+          <span className="text-[var(--gold)]">{t("art.read")} →</span>
+        </p>
+        {x.sample && <span className="mt-1 text-[11px] text-[var(--dim)]">({t("ui.sample")})</span>}
+      </div>
+    </a>
+  );
+}
+
+export function ProsePage() {
+  const slug = useHash();
+  const { prose, loaded } = useContent();
+  const { t } = useLang();
+  if (slug === null) return null;
+  if (slug && !slug.startsWith("kind=")) {
+    const x = prose.find((p) => p.slug === slug);
+    if (!x) return <Shell title=""><Back href={page("prose")} label={t("nav.prose")} />{loaded ? <Status k="pg.notFound" /> : <Status k="pg.loading" />}</Shell>;
+    return <ProseDetail x={x} />;
+  }
+  return <ProseList initial={slug ? slug.slice(5) : "all"} />;
+}
+
+function ProseList({ initial }: { initial: string }) {
+  const { prose } = useContent();
+  const { t, pick } = useLang();
+  const [q, setQ] = useState("");
+  const [kind, setKind] = useState(initial);
+  useEffect(() => setKind(initial), [initial]);
+  useTitle(t("nav.prose"));
+  const kinds = useMemo(() => [...new Set(prose.map((x) => x.kind))], [prose]);
+  const flat = (v?: L) => Object.values(v ?? {}).join(" ").toLowerCase();
+  const list = prose.filter((x) => (kind === "all" || x.kind === kind) && (!q.trim() || (flat(x.title) + flat(x.excerpt)).includes(q.trim().toLowerCase())));
+  return (
+    <Shell
+      kicker={t("prose.k")}
+      title={t("nav.prose")}
+      tools={
+        <div className="flex flex-wrap items-center gap-3">
+          <button className={`chip ${kind === "all" ? "on" : ""}`} onClick={() => setKind("all")}>{t("s.poets.all")}</button>
+          {kinds.map((k) => <button key={k} className={`chip ${kind === k ? "on" : ""}`} onClick={() => setKind(k)}>{pick(proseKind(k).l).text}</button>)}
+          <SearchBox q={q} setQ={setQ} />
+        </div>
+      }
+    >
+      {list.length === 0 ? <Status k="pg.empty" /> : <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{list.map((x) => <ProseCard key={x.slug} x={x} />)}</div>}
+    </Shell>
+  );
+}
+
+const BODY_LANGS = ["bal", "bal-latn", "en", "ur"] as const;
+
+function ProseDetail({ x }: { x: Prose }) {
+  const { prose, poets } = useContent();
+  const { t, pick, lang } = useLang();
+  const date = useDate();
+  const [body, setBody] = useState<Partial<L> | undefined>(x.body);
+  const [loading, setLoading] = useState(!x.body);
+  useTitle(pick(x.title).text);
+  useEffect(() => {
+    if (x.body) return;
+    if (!supabase) {
+      setBody(localProse.find((p) => p.slug === x.slug)?.body);
+      setLoading(false);
+      return;
+    }
+    supabase.from("prose").select("body, source").eq("slug", x.slug).maybeSingle().then(({ data }) => {
+      setBody((data?.body as Partial<L>) ?? undefined);
+      setLoading(false);
+    });
+  }, [x]);
+  const have = BODY_LANGS.filter((k) => (body as Record<string, string> | undefined)?.[k]?.trim());
+  const [show, setShow] = useState<string>("");
+  const cur = show && have.includes(show as never) ? show : have.includes(lang as never) ? lang : have[0];
+  const author = poets.find((p) => p.slug === x.authorSlug);
+  const more = prose.filter((p) => p.slug !== x.slug && (p.authorSlug && p.authorSlug === x.authorSlug)).slice(0, 3);
+  const text = cur ? (body as Record<string, string>)[cur] : "";
+  return (
+    <div className="section pt-12">
+      <Back href={page("prose")} label={t("nav.prose")} />
+      <article className="mx-auto max-w-[760px]" data-prose={x.slug}>
+        <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)] rtl:text-[14px] rtl:normal-case rtl:tracking-normal"><Tx v={proseKind(x.kind).l} /></p>
+        <Tx v={x.title} as="h1" className="display mt-3 text-[clamp(30px,4vw,52px)]" />
+        <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-[var(--faint)] pb-5 text-[13px] text-[var(--dim)]">
+          {author ? <a href={page("poets", author.slug)} className="text-[var(--text)] hover:text-[var(--gold)]"><Tx v={author.name} /></a> : x.authorText ? <Tx v={x.authorText} className="text-[var(--text)]" /> : null}
+          {x.date && <><span>·</span><Latin>{date(x.date)}</Latin></>}
+          {text && <><span>·</span><span><Latin>{minutes({ bal: text })}</Latin> {t("art.minRead")}</span></>}
+        </p>
+        {have.length > 1 && (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {have.map((k) => <button key={k} onClick={() => setShow(k)} className={`chip ${cur === k ? "on" : ""}`}>{LANG_NAME[k]}</button>)}
+          </div>
+        )}
+        {x.cover && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={x.cover} alt="" className="mt-8 w-full rounded-md object-cover" />
+        )}
+        <div className="mt-6">
+          {loading ? <Status k="pg.loading" /> : text ? (
+            <div lang={cur === "bal-latn" ? "bal-Latn" : cur} dir={isRtl(cur!) ? "rtl" : "ltr"}>
+              <Markdown text={text} className={`prose-lab ${cur === "bal" ? "nastaliq text-[22px] leading-[2.4]" : isRtl(cur!) ? "text-[19px] leading-[2.1]" : "text-[17px] leading-[1.85]"}`} />
+            </div>
+          ) : <Status k="pg.empty" />}
+        </div>
+        <div className="mt-8"><CopyButton label={t("pg.share")} text={() => location.href} /></div>
+      </article>
+      {more.length > 0 && (
+        <div className="mx-auto max-w-[1100px]">
+          <SectionTitle>{t("prose.more")}</SectionTitle>
+          <div className="grid gap-6 md:grid-cols-3">{more.map((p) => <ProseCard key={p.slug} x={p} />)}</div>
         </div>
       )}
     </div>

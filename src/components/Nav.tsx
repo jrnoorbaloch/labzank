@@ -18,7 +18,7 @@ const MORE: { k: DictKey; href: string }[] = [
   { k: "nav.media", href: "@media" },
   { k: "nav.culture", href: "#folk" },
   { k: "nav.articles", href: "@articles" },
-  { k: "nav.prose", href: "@library" },
+  { k: "nav.prose", href: "@prose" },
   { k: "nav.about", href: "@about" },
   { k: "nav.contact", href: "@contact" },
   { k: "nav.privacy", href: "@privacy" },

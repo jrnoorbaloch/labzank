@@ -8,6 +8,7 @@
  * for admin / editor (and super_admin).
  */
 
+import { formByKey, formKey, POETRY_FORMS, PROSE_KINDS } from "@/lib/forms";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/db/client";
 import { toast } from "@/components/dictionary/AdminEditing";
@@ -19,7 +20,7 @@ import { Bucket, LIMITS, bookPdfUrl, mediaUrl, removeMedia, uploadMedia } from "
 type Row = Record<string, any>;
 type L = { bal?: string; "bal-latn"?: string; en?: string; ur?: string };
 
-type FieldType = "text" | "textarea" | "number" | "bool" | "select" | "L" | "Ltext" | "translation" | "quote" | "palette" | "date" | "datetime" | "author" | "book" | "image" | "audio" | "pdf" | "cta" | "Lmd" | "tags";
+type FieldType = "form" | "text" | "textarea" | "number" | "bool" | "select" | "L" | "Ltext" | "translation" | "quote" | "palette" | "date" | "datetime" | "author" | "book" | "image" | "audio" | "pdf" | "cta" | "Lmd" | "tags";
 type Field = { key: string; label: string; type: FieldType; required?: boolean; options?: string[]; hint?: string; dir?: "rtl" | "ltr"; wide?: boolean };
 
 const MEDIA_BUCKET: Partial<Record<FieldType, Bucket>> = { image: "images", audio: "audio", pdf: "books" };
@@ -27,9 +28,10 @@ const STATUS: Field = { key: "status", label: "Status", type: "select", options:
 const SORT: Field = { key: "sort", label: "Order", type: "number", hint: "Lower numbers show first." };
 const BOOK_CATS = ["poetry", "literature", "history", "culture", "linguistics", "research", "fiction", "novels", "short-stories", "biography", "folk", "religious", "dictionary", "educational"];
 
-export type TableKey = "authors" | "poems" | "books" | "events" | "folk_items" | "audio_items" | "hero_slides" | "articles" | "videos" | "pages";
+export type TableKey = "authors" | "poems" | "prose" | "books" | "events" | "folk_items" | "audio_items" | "hero_slides" | "articles" | "videos" | "pages";
 
 const MD_HINT = "Markdown: ## Heading, **bold**, *italic*, [link](https://…), - list, > quote. Write each language you have; empty ones fall back to another language.";
+const PROSE_KIND_KEYS = PROSE_KINDS.map((k) => k.key);
 const ARTICLE_CATS = ["news", "essay", "criticism", "history", "interview", "language"];
 
 export const TABLES: Record<TableKey, { title: string; singular: string; titleField: string; fields: Field[]; defaults: Row; hasStatus: boolean; note?: string; order?: string }> = {
@@ -102,11 +104,29 @@ export const TABLES: Record<TableKey, { title: string; singular: string; titleFi
       { key: "roman", label: "Roman Balochi", type: "textarea", dir: "ltr", wide: true },
       { key: "translation", label: "Approved translations", type: "translation", wide: true },
       { key: "slug", label: "URL slug", type: "text", required: true },
-      { key: "form", label: "Form (ghazal, nazm…)", type: "L", required: true, wide: true },
+      { key: "form", label: "Form", type: "form", required: true, wide: true, hint: "Pick from the list so it lands in the right category everywhere (profile tabs, filters, homepage). Choose “Other” only for a form that is not listed." },
       { key: "author_id", label: "Poet", type: "author" },
       { key: "contributor", label: "Credit line (if not a listed poet)", type: "L", wide: true },
       { key: "is_sample", label: "Sample / placeholder text", type: "bool" },
       { key: "featured", label: "Show on homepage", type: "bool" },
+      SORT, STATUS,
+    ],
+  },
+  prose: {
+    title: "Prose", singular: "prose piece", titleField: "title", hasStatus: true, order: "published_at",
+    note: "Short stories (afsana), essays, tales, travelogues, memoirs and drama. Pick the author and the kind — the piece then appears on the Prose page and in its own tab on the author's profile. Write the Balochi text in the Balochi box; other languages are translations.",
+    defaults: { kind: "afsana", sort: 0, status: "draft" },
+    fields: [
+      { key: "title", label: "Title", type: "L", required: true, wide: true },
+      { key: "slug", label: "URL slug", type: "text", required: true },
+      { key: "kind", label: "Kind", type: "select", options: PROSE_KIND_KEYS },
+      { key: "author_id", label: "Author (listed poet / writer)", type: "author" },
+      { key: "author_text", label: "Author credit (if not listed)", type: "L", wide: true },
+      { key: "excerpt", label: "Summary (shown on cards)", type: "Ltext", wide: true },
+      { key: "body", label: "Text (Balochi original + translations)", type: "Lmd", wide: true, hint: MD_HINT },
+      { key: "cover_path", label: "Cover image (optional)", type: "image", hint: "Wide image, about 1600 × 900." },
+      { key: "source", label: "Source / permission", type: "text", wide: true, hint: "Where the text comes from and who allowed publishing it." },
+      { key: "published_at", label: "Publish date", type: "datetime", hint: "Filled in automatically when first published." },
       SORT, STATUS,
     ],
   },
@@ -258,6 +278,33 @@ function MediaField({ kind, folder, value, set, onUploaded, onDuration }: { kind
   );
 }
 
+function FormPicker({ value, set }: { value?: L; set: (v: unknown) => void }) {
+  const hasValue = !!value && Object.values(value).some((x) => x?.trim());
+  const key = hasValue ? formKey(value) : "";
+  const known = !!formByKey(key);
+  const [other, setOther] = useState(hasValue && !known);
+  return (
+    <div className="grid gap-2">
+      <select
+        value={other ? "__other" : known ? key : ""}
+        onChange={(e) => {
+          const k = e.target.value;
+          if (k === "__other") { setOther(true); return; }
+          setOther(false);
+          set(k ? { ...formByKey(k)!.l } : null);
+        }}
+        className={inputCls}
+        data-form-select
+      >
+        <option value="">— choose a form —</option>
+        {POETRY_FORMS.map((f) => <option key={f.key} value={f.key}>{f.l.en} · {f.l.bal}</option>)}
+        <option value="__other">Other (type it)…</option>
+      </select>
+      {other && <LInput value={value ?? ({} as L)} onChange={set} required />}
+    </div>
+  );
+}
+
 function FieldEditor({ f, value, set, authors, books, table, onUploaded, setOther }: { f: Field; value: unknown; set: (v: unknown) => void; authors: Row[]; books: Row[]; table: string; onUploaded: (bucket: Bucket, p: string) => void; setOther: (k: string, v: unknown) => void }) {
   switch (f.type) {
     case "image": case "audio": case "pdf":
@@ -270,6 +317,7 @@ function FieldEditor({ f, value, set, authors, books, table, onUploaded, setOthe
     case "date": return <input type="date" value={(value as string) ?? ""} onChange={(e) => set(e.target.value || null)} className={inputCls} />;
     case "datetime": return <input type="datetime-local" value={value ? String(value).slice(0, 16) : ""} onChange={(e) => set(e.target.value ? new Date(e.target.value).toISOString() : null)} className={inputCls} />;
     case "L": return <LInput value={(value as L) ?? {}} onChange={set} required={f.required} />;
+    case "form": return <FormPicker value={value as L | undefined} set={set} />;
     case "Lmd": return <LInput value={(value as L) ?? {}} onChange={set} multiline rows={14} />;
     case "tags": return <input value={((value as string[]) ?? []).join(", ")} onChange={(e) => set(e.target.value.split(",").map((x) => x.trimStart()))} placeholder="poetry, history" className={inputCls} dir="ltr" />;
     case "Ltext": return <LInput value={(value as L) ?? {}} onChange={set} multiline required={f.required} />;
@@ -412,7 +460,7 @@ export function ContentManager({ table }: { table: TableKey }) {
     }
     if (table === "authors") out.updated_at = new Date().toISOString();
     if (table === "videos" && !/^https:\/\//i.test(String(out.url ?? ""))) return toast("The video link must start with https://");
-    if ((table === "poems" || table === "articles") && out.status === "published" && !out.published_at) out.published_at = new Date().toISOString();
+    if ((table === "poems" || table === "articles" || table === "prose") && out.status === "published" && !out.published_at) out.published_at = new Date().toISOString();
     if (table === "articles" || table === "pages") out.updated_at = new Date().toISOString();
     setSaving(true);
     const { error } = edit.id ? await supabase!.from(table).update(out).eq("id", edit.id) : await supabase!.from(table).insert(out);

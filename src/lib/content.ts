@@ -569,3 +569,35 @@ export const articles: Article[] = [
 ];
 
 export const videos: Video[] = [];
+
+/* ─────────────────────────── prose (afsana, essay, …) ─────────────────────────── */
+
+export type Prose = {
+  slug: string;
+  kind: string; // forms.ts PROSE_KINDS key
+  title: L;
+  excerpt: L;
+  cover?: string;
+  authorSlug?: string;
+  authorText?: L;
+  date?: string;
+  /** Markdown per language; bal = the Balochi original. Fetched on the detail page when live. */
+  body?: Partial<L>;
+  sample?: boolean;
+};
+
+export const prose: Prose[] = [
+  {
+    slug: "the-lamp-at-the-well",
+    kind: "afsana",
+    title: { bal: "چاتءِ سرءِ چراگ", "bal-latn": "Cháté sará cherág", en: "The lamp at the well", ur: "کنویں پر چراغ" },
+    excerpt: { bal: "شپ ءِ تہاری ءَ یک جنکے چراگے زُرت ءُ چات ءِ نیمگ ءَ شت.", en: "On a dark night a girl carries a lamp to the village well — a short sample story.", ur: "اندھیری رات میں ایک لڑکی چراغ لے کر کنویں کی طرف جاتی ہے — ایک مختصر نمونہ کہانی۔" },
+    authorText: { bal: "لبزانک (نمونہ)", "bal-latn": "Labzaank (sample)", en: "Labzaank (sample)", ur: "لبزانک (نمونہ)" },
+    date: "2026-11-16T00:00:00Z",
+    sample: true,
+    body: {
+      en: "*Sample text written for the demo — replace it from the admin panel.*\n\nThe wind had blown out every lamp in the village except one. Gul Bibi held it close to her chest and walked to the well, counting the stars she knew by name.\n\nAt the well she found her grandmother, who had been waiting there since evening. \"I knew someone would bring the light,\" the old woman said, and they sat together until the moon rose over the hills.",
+      ur: "*یہ نمونے کا متن ہے — ایڈمن پینل سے بدل دیں۔*\n\nہوا نے گاؤں کے سب چراغ بجھا دیے تھے، بس ایک باقی تھا۔ گل بی بی اسے سینے سے لگائے کنویں تک گئی، جہاں اس کی دادی شام سے انتظار کر رہی تھیں۔",
+    },
+  },
+];

@@ -24,13 +24,13 @@ const MENU = [
   ["sources", "Sources"], ["alpha", "Alphabetical index ↗"],
 ] as const;
 const CONTENT_MENU = [
-  ["authors", "Poets & authors"], ["poems", "Poetry"], ["books", "Books / library"], ["articles", "Articles / blog"], ["videos", "Videos"], ["events", "Events & news"],
+  ["authors", "Poets & authors"], ["poems", "Poetry"], ["prose", "Prose (afsana, essay…)"], ["books", "Books / library"], ["articles", "Articles / blog"], ["videos", "Videos"], ["events", "Events & news"],
   ["folk_items", "Folk literature"], ["audio_items", "Audio poetry"], ["hero_slides", "Hero slider"],
   ["pages", "Pages (About, Privacy…)"], ["homepage", "Homepage builder"], ["subscribers", "Newsletter"], ["messages", "Messages"],
 ] as const;
 const SITE_MENU = [["branding", "Branding"], ["languages", "Languages"], ["dict-visibility", "Dictionary visibility"]] as const;
 type Sec = (typeof MENU)[number][0] | (typeof CONTENT_MENU)[number][0] | (typeof SITE_MENU)[number][0] | "edit";
-const CONTENT_TABLES = ["authors", "poems", "books", "events", "folk_items", "audio_items", "hero_slides", "articles", "videos", "pages"] as const;
+const CONTENT_TABLES = ["authors", "poems", "prose", "books", "events", "folk_items", "audio_items", "hero_slides", "articles", "videos", "pages"] as const;
 const LOCAL_OK: Sec[] = ["overview", "import", "history", "wotd", "alpha"];
 
 type Batch = { id: string; at: string; file: string; source: string; licence: string; imported: number; skipped: number; merged?: number; status?: string; rows: Checked["mapped"][] };

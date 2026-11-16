@@ -27,6 +27,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 import Logo from "./Logo";
 import { Verse } from "./WordLookup";
+import { formByKey, formKey, formOrder } from "@/lib/forms";
 
 /* ─────────────────────────── shared pieces ─────────────────────────── */
 
@@ -558,14 +559,14 @@ function Collections() {
   const { t } = useLang();
   const forms = new Map<string, { l: Poem["form"]; n: number }>();
   for (const p of poems) {
-    const k = p.form.en ?? p.form.bal;
+    const k = formKey(p.form);
     const f = forms.get(k);
-    if (f) f.n++; else forms.set(k, { l: p.form, n: 1 });
+    if (f) f.n++; else forms.set(k, { l: formByKey(k)?.l ?? p.form, n: 1 });
   }
   const byPoet = poets.map((p) => ({ p, n: poems.filter((x) => x.authorSlug === p.slug).length })).filter((x) => x.n > 0);
   const hues = [28, 205, 345, 150, 45, 265, 10, 185];
   const cards: { key: string; title: ReactNode; bal: string; n: number; href: string }[] = [
-    ...[...forms.entries()].map(([k, f]) => ({ key: "f-" + k, title: <Tx v={f.l} />, bal: f.l.bal, n: f.n, href: page("poetry", "form=" + encodeURIComponent(k)) })),
+    ...[...forms.entries()].sort((a, b) => formOrder(a[0]) - formOrder(b[0])).map(([k, f]) => ({ key: "f-" + k, title: <Tx v={f.l} />, bal: f.l.bal, n: f.n, href: page("poetry", "form=" + encodeURIComponent(k)) })),
     ...byPoet.map(({ p, n }) => ({ key: "p-" + p.slug, title: <Tx v={p.name} />, bal: p.name.bal, n, href: page("poets", p.slug) })),
   ];
   if (!cards.length) return null;

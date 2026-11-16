@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/poets.html`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/library.html`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/dictionary.html`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/prose.html`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/articles.html`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/media.html`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/about.html`, changeFrequency: "monthly", priority: 0.5 },

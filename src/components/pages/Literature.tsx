@@ -15,6 +15,8 @@ import { page } from "@/lib/links";
 import { siteName } from "@/lib/branding";
 import { Cover, Medallion, ReadPdf } from "@/components/BrandSections";
 import { Verse } from "@/components/WordLookup";
+import { formByKey, formKey, formOrder } from "@/lib/forms";
+import { PoetProfile } from "./PoetProfile";
 
 /* ─────────────────────────── shared ─────────────────────────── */
 
@@ -156,12 +158,13 @@ export function PoetsPage() {
   const c = useContent();
   const label = useLangLabel("nav.poets");
   if (slug === null) return null;
-  if (slug) {
-    const p = c.poets.find((x) => x.slug === slug);
+  if (slug && !slug.startsWith("period=")) {
+    const [ps, tab = ""] = slug.split("/");
+    const p = c.poets.find((x) => x.slug === ps);
     if (!p) return <Shell title=""><Back href={page("poets")} label={label} />{c.loaded ? <Status k="pg.notFound" /> : <Status k="pg.loading" />}</Shell>;
-    return <PoetDetail p={p} />;
+    return <PoetProfile p={p} tab={tab} />;
   }
-  return <PoetList />;
+  return <PoetList initial={slug === "period=classical" ? "classical" : slug === "period=modern" ? "modern" : "all"} />;
 }
 
 // tiny helper so early returns above can read a label without breaking hook order
@@ -169,11 +172,12 @@ function useLangLabel(k: "nav.poets" | "nav.poetry" | "nav.books") {
   return useLang().t(k);
 }
 
-function PoetList() {
+function PoetList({ initial }: { initial: "all" | "classical" | "modern" }) {
   const { poets } = useContent();
   const { t } = useLang();
   const [q, setQ] = useState("");
-  const [period, setPeriod] = useState<"all" | "classical" | "modern">("all");
+  const [period, setPeriod] = useState<"all" | "classical" | "modern">(initial);
+  useEffect(() => setPeriod(initial), [initial]);
   useTitle(t("nav.poets"));
   const list = poets.filter((p) => (period === "all" || p.period === period) && matches(q, p.name, p.place, p.years));
   return (
@@ -205,71 +209,6 @@ function PoetList() {
   );
 }
 
-function PoetDetail({ p }: { p: Poet }) {
-  const { poems, books, audio, poets } = useContent();
-  const { t, pick } = useLang();
-  useTitle(pick(p.name).text);
-  const theirPoems = poems.filter((x) => x.authorSlug === p.slug);
-  const theirBooks = books.filter((x) => x.authorSlug === p.slug);
-  const theirAudio = audio.filter((x) => x.authorSlug === p.slug);
-  return (
-    <div className="section pt-12">
-      <Back href={page("poets")} label={t("nav.poets")} />
-      <div className="card relative grid items-center gap-10 overflow-hidden p-8 md:grid-cols-[auto_1fr] md:p-14">
-        <div className="doch-bg edge-fade absolute inset-y-0 end-0 w-1/3 opacity-30" />
-        <div className="mx-auto"><Medallion p={p} size={220} /></div>
-        <div className="relative">
-          <p className="kicker">{t(p.period === "classical" ? "s.poets.classical" : "s.poets.modern")}</p>
-          <Tx v={p.name} as="h1" className="display h2 mt-2" />
-          {p.name["bal-latn"] && <p className="mt-1 font-[family-name:var(--latin-display)] text-[20px] italic text-[var(--gold)]/80 rtl:text-right" lang="bal-Latn" dir="ltr">{p.name["bal-latn"]}</p>}
-          <Tx v={p.bio} as="p" className="lead mt-5 max-w-[60ch]" />
-          <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-4">
-            {[
-              [t("s.potd.born"), <Tx key="b" v={p.place} />],
-              [t("s.potd.period"), <Latin key="y">{p.years}</Latin>],
-              ...(p.works ? [[t("s.potd.works"), <Latin key="w">{p.works}</Latin>]] : []),
-            ].map(([dt, dd], j) => (
-              <div key={j}>
-                <dt className="text-[12px] text-[var(--dim)]">{dt}</dt>
-                <dd className="mt-1 text-[18px] text-[var(--gold-bright)]">{dd}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </div>
-
-      {theirPoems.length > 0 && (
-        <>
-          <SectionTitle>{t("pg.poems")}</SectionTitle>
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{theirPoems.map((x) => <PoemCard key={x.id} p={x} poets={poets} />)}</div>
-        </>
-      )}
-      {theirBooks.length > 0 && (
-        <>
-          <SectionTitle>{t("pg.books")}</SectionTitle>
-          <div className="grid grid-cols-2 gap-7 sm:grid-cols-3 lg:grid-cols-5">{theirBooks.map((b) => <BookTile key={b.id} b={b} />)}</div>
-        </>
-      )}
-      {theirAudio.length > 0 && (
-        <>
-          <SectionTitle>{t("pg.audio")}</SectionTitle>
-          <div className="flex flex-col gap-3">
-            {theirAudio.map((a, i) => (
-              <div key={i} className="card flex flex-wrap items-center gap-5 p-4">
-                <div className="min-w-[200px] flex-1">
-                  <Tx v={a.title} className="block text-[16px]" />
-                  <Tx v={a.by} className="block text-[13px] text-[var(--dim)]" />
-                </div>
-                {a.src ? <audio controls preload="none" src={a.src} className="h-9 max-w-full" /> : <Latin className="text-[13px] text-[var(--dim)]">{a.dur}</Latin>}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
 /* ─────────────────────────── Poetry ─────────────────────────── */
 
 export function PoetryPage() {
@@ -290,17 +229,18 @@ function PoemList({ initialForm = "all" }: { initialForm?: string }) {
   const { poems, poets } = useContent();
   const { t, pick } = useLang();
   const [q, setQ] = useState("");
-  const [form, setForm] = useState(initialForm);
-  useEffect(() => setForm(initialForm), [initialForm]);
+  const toKey = (f: string) => (f === "all" ? "all" : formByKey(f) ? f : formKey({ en: f, bal: f }));
+  const [form, setForm] = useState(toKey(initialForm));
+  useEffect(() => setForm(toKey(initialForm)), [initialForm]);
   useTitle(t("nav.poetry"));
   const forms = useMemo(() => {
     const m = new Map<string, L>();
-    for (const p of poems) m.set(p.form.en ?? p.form.bal, p.form);
-    return [...m.entries()];
+    for (const p of poems) { const k = formKey(p.form); if (!m.has(k)) m.set(k, formByKey(k)?.l ?? p.form); }
+    return [...m.entries()].sort((a, b) => formOrder(a[0]) - formOrder(b[0]));
   }, [poems]);
   const list = poems.filter((p) => {
     const poet = poets.find((x) => x.slug === p.authorSlug);
-    return (form === "all" || (p.form.en ?? p.form.bal) === form) && matches(q, p.original, p.roman, p.translation.en, p.translation.ur, poet?.name, p.contributor);
+    return (form === "all" || formKey(p.form) === form) && matches(q, p.original, p.roman, p.translation.en, p.translation.ur, poet?.name, p.contributor);
   });
   return (
     <Shell
