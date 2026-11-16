@@ -15,7 +15,7 @@ import { page } from "@/lib/links";
 import { siteName } from "@/lib/branding";
 import { Cover, Medallion, ReadPdf } from "@/components/BrandSections";
 import { Verse } from "@/components/WordLookup";
-import { formByKey, formKey, formOrder, verseFor, verseOther } from "@/lib/forms";
+import { formByKey, formKey, formOrder, verseFor } from "@/lib/forms";
 import { PoetProfile } from "./PoetProfile";
 
 /* ─────────────────────────── shared ─────────────────────────── */
@@ -268,9 +268,11 @@ function PoemDetail({ p }: { p: Poem }) {
   const { t, lang } = useLang();
   const poet = poets.find((x) => x.slug === p.authorSlug);
   useTitle(verseFor(p, lang).text.split("\n")[0]);
-  const langs = (["en", "ur"] as const).filter((k) => p.translation[k]?.trim());
-  const [tr, setTr] = useState<"en" | "ur">(lang === "ur" ? "ur" : "en");
-  const shownTr = langs.includes(tr) ? tr : langs[0];
+  // only the reader's language: English → Roman verse + English translation,
+  // Urdu → original script + Urdu translation, Balochi / Roman Balochi → the verse alone
+  const v = verseFor(p, lang);
+  const trLang = lang === "en" || lang === "ur" ? lang : null;
+  const trText = trLang ? p.translation[trLang]?.trim() : "";
   const more = [...poems.filter((x) => x.id !== p.id && x.authorSlug && x.authorSlug === p.authorSlug), ...poems.filter((x) => x.id !== p.id && (!x.authorSlug || x.authorSlug !== p.authorSlug))].slice(0, 3);
   return (
     <div className="section pt-12">
@@ -282,31 +284,26 @@ function PoemDetail({ p }: { p: Poem }) {
           {p.sample && <span className="text-[12px] text-[var(--dim)]">{t("ui.sample")}</span>}
         </div>
         <p className="mt-4 text-center text-[12px] uppercase tracking-[0.2em] text-[var(--dim)]">{t("pg.original")}</p>
-        {[verseFor(p, lang), verseOther(p, lang)].map((v, i) => !v ? null : v.rtl ? (
-          <Verse key={i} text={v.text} className={`nastaliq relative mx-auto max-w-[34ch] text-center ${i === 0 ? "mt-6 text-[clamp(26px,3.2vw,44px)]" : "mt-8 text-[clamp(20px,2vw,28px)] text-[var(--dim)]"}`} lang="bal" dir="rtl" style={{ lineHeight: 2.4 }} data-poem-original />
+        {v.rtl ? (
+          <Verse text={v.text} className="nastaliq relative mx-auto mt-6 max-w-[34ch] text-center text-[clamp(26px,3.2vw,44px)]" lang="bal" dir="rtl" style={{ lineHeight: 2.4 }} data-poem-original />
         ) : (
-          <Verse key={i} text={v.text} className={`mx-auto max-w-[52ch] text-center font-[family-name:var(--latin-display)] italic leading-relaxed ${i === 0 ? "mt-6 text-[clamp(20px,2vw,28px)] text-[var(--text)]" : "mt-8 text-[clamp(17px,1.5vw,21px)] text-[var(--gold)]/85"}`} lang="bal-Latn" dir="ltr" />
-        ))}
+          <Verse text={v.text} className="relative mx-auto mt-6 max-w-[52ch] text-center font-[family-name:var(--latin-display)] text-[clamp(20px,2vw,28px)] italic leading-relaxed text-[var(--text)]" lang="bal-Latn" dir="ltr" data-poem-original />
+        )}
         <p className="mt-4 text-center text-[12px] text-[var(--dim)]" data-word-hint>{t("w.hint")}</p>
-        <div className="mx-auto mt-12 max-w-[640px] border-t border-[var(--faint)] pt-8">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <span className="text-[13px] text-[var(--dim)]">{t("s.poetry.translation")}</span>
-            {langs.length > 1 && (
-              <div className="flex gap-2">
-                {langs.map((k) => <button key={k} lang={k} className={`chip ${shownTr === k ? "on" : ""} ${k === "en" ? "font-[family-name:var(--latin-body)]" : ""}`} onClick={() => setTr(k)}>{k === "en" ? "English" : "اردو"}</button>)}
-              </div>
+        {trLang && (
+          <div className="mx-auto mt-12 max-w-[640px] border-t border-[var(--faint)] pt-8" data-poem-translation>
+            <p className="mb-4 text-[13px] text-[var(--dim)]">{t("s.poetry.translation")}</p>
+            {trText ? (
+              <p className={`whitespace-pre-line text-center ${trLang === "ur" ? "text-[21px]" : "font-[family-name:var(--latin-display)] text-[19px]"}`} lang={trLang} dir={trLang === "ur" ? "rtl" : "ltr"} style={{ lineHeight: trLang === "ur" ? 2.1 : 1.8 }}>
+                {trText}
+              </p>
+            ) : (
+              <p className="text-center text-[14px] text-[var(--dim)]">{t("pg.noTranslation")}</p>
             )}
           </div>
-          {shownTr ? (
-            <p className={`whitespace-pre-line text-center ${shownTr === "ur" ? "text-[21px]" : "font-[family-name:var(--latin-display)] text-[19px]"}`} lang={shownTr} dir={shownTr === "ur" ? "rtl" : "ltr"} style={{ lineHeight: shownTr === "ur" ? 2.1 : 1.8 }}>
-              {p.translation[shownTr]}
-            </p>
-          ) : (
-            <p className="text-center text-[14px] text-[var(--dim)]">{t("pg.noTranslation")}</p>
-          )}
-        </div>
+        )}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          <CopyButton label={t("s.poetry.copy")} text={() => p.original} />
+          <CopyButton label={t("s.poetry.copy")} text={() => v.text} />
           <CopyButton label={t("pg.share")} text={() => location.href} />
         </div>
       </article>
@@ -395,7 +392,6 @@ function BookDetail({ b }: { b: Book }) {
         <div>
           {b.demo && <span className="rounded-full border border-black/15 px-3 py-0.5 text-[12px] text-[var(--dim)]">{t("pg.demoBook")}</span>}
           <Tx v={b.title} as="h1" className="display h2 mt-3" />
-          {b.title["bal-latn"] && <p className="mt-1 font-[family-name:var(--latin-display)] text-[20px] italic text-[var(--gold)]/80 rtl:text-right" lang="bal-Latn" dir="ltr">{b.title["bal-latn"]}</p>}
           <div className="mt-6 flex items-center gap-3">
             <span className="text-[13px] text-[var(--dim)]">{t("pg.author")}:</span>
             {author ? (

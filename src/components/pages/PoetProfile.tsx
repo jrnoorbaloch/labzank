@@ -247,7 +247,6 @@ export function PoetProfile({ p, tab }: { p: Poet; tab: string }) {
               </button>
               {copied && <span className="text-[12px] text-white/75">{t("pf.copied")}</span>}
             </div>
-            {p.name["bal-latn"] && lang !== "bal-latn" && <p className="mt-1 italic text-white/70" lang="bal-Latn" dir="ltr">{p.name["bal-latn"]}</p>}
             <p className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[14px] text-white/85 sm:justify-start">
               <span className="flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3.5" y="5" width="17" height="15" rx="2" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg><Latin>{p.years}</Latin></span>
               <span className="text-white/40">|</span>
@@ -317,7 +316,7 @@ export function PoetProfile({ p, tab }: { p: Poet; tab: string }) {
           )}
           <a href={page("dictionary")} className="block overflow-hidden rounded-md text-white" style={{ background: "linear-gradient(150deg, hsl(28 42% 40%), hsl(28 46% 18%))" }}>
             <div className="p-6 text-center">
-              <p className="nastaliq text-[34px]" lang="bal" dir="rtl" style={{ lineHeight: 1.9 }}>لبزبلد</p>
+              <p className="text-[26px] font-semibold rtl:nastaliq rtl:text-[34px]">{t("nav.dictionary")}</p>
               <p className="mt-2 text-[14px] text-white/85">{t("x.dict")}</p>
               <span className="mt-4 inline-block rounded border border-white/70 px-4 py-1.5 text-[12px] font-semibold uppercase tracking-wider rtl:normal-case">{t("h.learn")}</span>
             </div>

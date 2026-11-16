@@ -8,6 +8,7 @@
 
 import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { Tx, useLang } from "@/lib/i18n";
+import type { L } from "@/lib/i18n";
 import type { Book, Poet } from "@/lib/content";
 import { SectionKey, useContent } from "@/lib/content-store";
 import { supabase } from "@/lib/db/client";
@@ -31,6 +32,29 @@ import { formByKey, formKey, formOrder, verseFor } from "@/lib/forms";
 
 /* ─────────────────────────── shared pieces ─────────────────────────── */
 
+/** decorative text in the reader's language: Nastaliq for Balochi / Urdu, Merriweather for Latin */
+export function Deco({ v, className = "", rtlStyle }: { v: L; className?: string; rtlStyle?: React.CSSProperties }) {
+  const { pick } = useLang();
+  const r = pick(v);
+  const rtl = r.lang === "bal" || r.lang === "ur";
+  return (
+    <span className={`${rtl ? "nastaliq" : "font-[family-name:var(--latin-display)]"} ${className}`} lang={r.lang === "bal-latn" ? "bal-Latn" : r.lang} dir={rtl ? "rtl" : "ltr"} style={rtl ? rtlStyle : { lineHeight: 1.35 }}>
+      {r.text}
+    </span>
+  );
+}
+
+function MedallionInitial({ p, size }: { p: Poet; size: number }) {
+  const { pick } = useLang();
+  const r = pick(p.name);
+  const rtl = r.lang === "bal" || r.lang === "ur";
+  return (
+    <span className={`absolute inset-0 grid place-items-center ${rtl ? "nastaliq" : "font-[family-name:var(--latin-display)] font-bold"}`} style={{ fontSize: size * (rtl ? 0.42 : 0.36), lineHeight: 1, color: `hsl(${p.hue} 45% 28%)` }} lang={r.lang === "bal-latn" ? "bal-Latn" : r.lang}>
+      {r.text.charAt(0)}
+    </span>
+  );
+}
+
 export function Medallion({ p, size = 120 }: { p: Poet; size?: number }) {
   return (
     <div
@@ -47,9 +71,7 @@ export function Medallion({ p, size = 120 }: { p: Poet; size?: number }) {
         // eslint-disable-next-line @next/next/no-img-element
         <img src={p.photo} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
-        <span className="nastaliq absolute inset-0 grid place-items-center" style={{ fontSize: size * 0.42, lineHeight: 1, color: `hsl(${p.hue} 45% 28%)` }} lang="bal">
-          {p.name.bal.charAt(0)}
-        </span>
+        <MedallionInitial p={p} size={size} />
       )}
     </div>
   );
@@ -71,12 +93,7 @@ export function Cover({ b, className = "" }: { b: Book; className?: string }) {
       <div className="doch-bg absolute inset-0 opacity-50" />
       <div className="absolute inset-y-0 start-0 w-[7%] bg-black/30" />
       <div className="absolute inset-[9%] flex flex-col items-center justify-center rounded-[3px] border text-center" style={{ borderColor: b.palette[1] + "88" }}>
-        <span className="nastaliq px-2 text-[clamp(16px,1.6vw,24px)]" style={{ color: b.palette[1], lineHeight: 1.9 }} lang="bal" dir="rtl">
-          {b.title.bal}
-        </span>
-        <span className="mt-1 px-2 font-[family-name:var(--latin-body)] text-[9px] uppercase tracking-[0.2em] text-white/60" lang="en" dir="ltr">
-          {b.title.en}
-        </span>
+        <span style={{ color: b.palette[1] }}><Deco v={b.title} className="block px-2 text-[clamp(14px,1.4vw,22px)]" rtlStyle={{ lineHeight: 1.9 }} /></span>
       </div>
     </div>
   );
@@ -270,9 +287,7 @@ function Recent() {
             <button onClick={() => toggle(i)} className="group relative block aspect-[3/4] w-full overflow-hidden rounded-lg text-start" aria-label={`${t("h.play")}`} data-audio-card>
               <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, hsl(${hues[i % 6]} 40% 34%), hsl(${hues[i % 6]} 45% 14%))` }} />
               <div className="doch-bg absolute inset-0 opacity-40" />
-              <span className="nastaliq absolute inset-x-3 top-6 text-center text-[clamp(18px,1.6vw,24px)] text-[#f3e3b5]" lang="bal" dir="rtl" style={{ lineHeight: 2 }}>
-                {a.title.bal}
-              </span>
+              <span className="absolute inset-x-3 top-6 text-center text-[#f3e3b5]"><Deco v={a.title} className="text-[clamp(17px,1.5vw,23px)]" rtlStyle={{ lineHeight: 2 }} /></span>
               <span className="absolute left-1/2 top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/90 text-[var(--text)] shadow-lg transition group-hover:scale-105">
                 {playing === i ? "❚❚" : "▶"}
               </span>
@@ -324,18 +339,23 @@ function WordOfDay() {
       {w && g && (
         <div className="text-center">
           <a href={page("dictionary", `word-${w.slug}`)} className="inline-block">
-            <span className="block font-[family-name:var(--latin-display)] text-[clamp(44px,5vw,68px)] italic leading-tight text-[var(--rust)]" lang="bal-Latn" dir="ltr">{w.latn}</span>
+            {lang === "en" || lang === "bal-latn" ? (
+              <span className="block font-[family-name:var(--latin-display)] text-[clamp(44px,5vw,68px)] italic leading-tight text-[var(--rust)]" lang="bal-Latn" dir="ltr">{w.latn}</span>
+            ) : (
+              <span className="nastaliq block text-[clamp(40px,4.4vw,60px)] text-[var(--rust)]" lang="bal" dir="rtl" style={{ lineHeight: 1.9 }}>{w.arab}</span>
+            )}
           </a>
-          <p className="mt-1 flex items-center justify-center gap-3 text-[var(--dim)]">
-            <span className="nastaliq text-[26px] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 1.8 }}>{w.arab}</span>
-            {w.ipa && <><span className="text-[var(--rust)]">•</span><span className={`text-[14px] ${latin}`} dir="ltr">{w.ipa}</span></>}
-          </p>
-          <p className="mt-3 text-[11px] text-[var(--dim)]">{t("h.meaning")}</p>
-          <p className="mt-1 text-[clamp(16px,1.4vw,19px)]" lang={lang === "ur" ? "ur" : "en"} dir={lang === "ur" ? "rtl" : "ltr"}>
-            {(lang === "ur" ? g.ur : g.en) ?? g.en}
-          </p>
-          {ex && (
-            <p className="nastaliq mx-auto mt-5 max-w-[36ch] text-[20px] text-[var(--dim)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }}>{ex.arab}</p>
+          {w.ipa && <p className={`mt-1 text-[14px] text-[var(--dim)] ${latin}`} dir="ltr">{w.ipa}</p>}
+          {(lang === "en" || lang === "ur") && (lang === "ur" ? g.ur : g.en) && (
+            <>
+              <p className="mt-3 text-[11px] text-[var(--dim)]">{t("h.meaning")}</p>
+              <p className="mt-1 text-[clamp(16px,1.4vw,19px)]" lang={lang} dir={lang === "ur" ? "rtl" : "ltr"}>{lang === "ur" ? g.ur : g.en}</p>
+            </>
+          )}
+          {ex && (lang === "en" || lang === "bal-latn" ? ex.latn : ex.arab) && (
+            lang === "en" || lang === "bal-latn"
+              ? <p className="mx-auto mt-5 max-w-[46ch] text-[17px] italic text-[var(--dim)]" lang="bal-Latn" dir="ltr">{ex.latn}</p>
+              : <p className="nastaliq mx-auto mt-5 max-w-[36ch] text-[20px] text-[var(--dim)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }}>{ex.arab}</p>
           )}
         </div>
       )}
@@ -567,9 +587,9 @@ function Collections() {
   }
   const byPoet = poets.map((p) => ({ p, n: poems.filter((x) => x.authorSlug === p.slug).length })).filter((x) => x.n > 0);
   const hues = [28, 205, 345, 150, 45, 265, 10, 185];
-  const cards: { key: string; title: ReactNode; bal: string; n: number; href: string }[] = [
-    ...[...forms.entries()].sort((a, b) => formOrder(a[0]) - formOrder(b[0])).map(([k, f]) => ({ key: "f-" + k, title: <Tx v={f.l} />, bal: f.l.bal, n: f.n, href: page("poetry", "form=" + encodeURIComponent(k)) })),
-    ...byPoet.map(({ p, n }) => ({ key: "p-" + p.slug, title: <Tx v={p.name} />, bal: p.name.bal, n, href: page("poets", p.slug) })),
+  const cards: { key: string; title: ReactNode; l: L; n: number; href: string }[] = [
+    ...[...forms.entries()].sort((a, b) => formOrder(a[0]) - formOrder(b[0])).map(([k, f]) => ({ key: "f-" + k, title: <Tx v={f.l} />, l: f.l, n: f.n, href: page("poetry", "form=" + encodeURIComponent(k)) })),
+    ...byPoet.map(({ p, n }) => ({ key: "p-" + p.slug, title: <Tx v={p.name} />, l: p.name, n, href: page("poets", p.slug) })),
   ];
   if (!cards.length) return null;
   return (
@@ -581,7 +601,7 @@ function Collections() {
             <div className="relative aspect-[4/3] overflow-hidden rounded-md">
               <div className="absolute inset-0 transition duration-500 group-hover:scale-105" style={{ background: `linear-gradient(150deg, hsl(${hues[i % 8]} 38% 40%), hsl(${hues[i % 8]} 44% 16%))` }} />
               <div className="doch-bg absolute inset-0 opacity-30" />
-              <span className="nastaliq absolute inset-0 grid place-items-center px-4 text-center text-[clamp(24px,2.2vw,34px)] text-[#f3e3b5]" lang="bal" dir="rtl" style={{ lineHeight: 2 }}>{c.bal}</span>
+              <span className="absolute inset-0 grid place-items-center px-4 text-center text-[#f3e3b5]"><Deco v={c.l} className="text-[clamp(22px,2vw,32px)]" rtlStyle={{ lineHeight: 2 }} /></span>
             </div>
             <p className="mt-3 text-[16px] font-semibold group-hover:text-[var(--gold)]">{c.title}</p>
             <p className="text-[12px] text-[var(--dim)]"><Latin>{c.n}</Latin> {t("h.poems")}</p>
@@ -597,11 +617,11 @@ function Collections() {
 
 function Explore() {
   const { t } = useLang();
-  const items: { k: DictKey; d: DictKey; href: string; hue: number; glyph: string; bal: string }[] = [
-    { k: "nav.dictionary", d: "x.dict", href: page("dictionary"), hue: 28, glyph: "لبز", bal: "لبزبلد" },
-    { k: "nav.books", d: "x.lib", href: page("library"), hue: 205, glyph: "کتاب", bal: "کتابجاہ" },
-    { k: "nav.media", d: "x.media", href: page("media"), hue: 345, glyph: "توار", bal: "توار ءُ ویڈیو" },
-    { k: "nav.articles", d: "x.art", href: page("articles"), hue: 150, glyph: "نبشتہ", bal: "نبشتانک" },
+  const items: { k: DictKey; d: DictKey; href: string; hue: number; glyph: string; bal: string; l: Omit<L, "bal"> }[] = [
+    { k: "nav.dictionary", d: "x.dict", href: page("dictionary"), hue: 28, glyph: "لبز", bal: "لبزبلد", l: { "bal-latn": "Labzbald", en: "Dictionary", ur: "لغت" } },
+    { k: "nav.books", d: "x.lib", href: page("library"), hue: 205, glyph: "کتاب", bal: "کتابجاہ", l: { "bal-latn": "Ketábjáh", en: "Library", ur: "کتب خانہ" } },
+    { k: "nav.media", d: "x.media", href: page("media"), hue: 345, glyph: "توار", bal: "توار ءُ ویڈیو", l: { "bal-latn": "Tawár o video", en: "Audio & Video", ur: "آڈیو و ویڈیو" } },
+    { k: "nav.articles", d: "x.art", href: page("articles"), hue: 150, glyph: "نبشتہ", bal: "نبشتانک", l: { "bal-latn": "Nebeshtánk", en: "Articles", ur: "مضامین" } },
   ];
   return (
     <Section id="explore">
@@ -611,7 +631,7 @@ function Explore() {
           <article key={x.k} data-anim data-explore-card className="flex flex-col overflow-hidden rounded-md border border-[var(--faint)] bg-white shadow-sm">
             <div className="relative grid h-40 place-items-center" style={{ background: `linear-gradient(135deg, hsl(${x.hue} 42% 42%), hsl(${x.hue} 46% 20%))` }}>
               <div className="doch-bg absolute inset-0 opacity-25" />
-              <span className="nastaliq relative text-[40px] text-[#f3e3b5]" lang="bal" dir="rtl" style={{ lineHeight: 1.9 }}>{x.bal}</span>
+              <span className="relative px-4 text-center text-[#f3e3b5]"><Deco v={{ bal: x.bal, ...x.l }} className="text-[30px] rtl:text-[40px]" rtlStyle={{ lineHeight: 1.9 }} /></span>
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h3 className="text-[18px] font-semibold">{t(x.k)}</h3>

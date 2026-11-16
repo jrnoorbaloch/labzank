@@ -123,6 +123,8 @@ export function LangProvider({ children }: { children: ReactNode }) {
   const pick = useCallback(
     (v: L) => {
       if (v[lang]) return { text: v[lang]!, lang, fallback: false };
+      // English readers: Roman Balochi (same script) before the Arabic-script original
+      if (lang === "en" && v["bal-latn"]) return { text: v["bal-latn"]!, lang: "bal-latn" as Lang, fallback: false };
       if (lang === "bal-latn") return { text: v.bal, lang: "bal" as Lang, fallback: false };
       return { text: v.bal, lang: "bal" as Lang, fallback: true };
     },
