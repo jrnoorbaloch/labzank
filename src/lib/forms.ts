@@ -60,3 +60,28 @@ export function formOrder(key: string): number {
 export function proseKind(key: string): FormDef {
   return PROSE_KINDS.find((f) => f.key === key) ?? PROSE_KINDS[PROSE_KINDS.length - 1];
 }
+
+/* ── which script to show for the reader's language ── */
+
+export const hasArabic = (s?: string) => /[؀-ۿݐ-ݿ]/.test(s ?? "");
+
+type VerseSrc = { original: string; roman?: string };
+export type VerseView = { text: string; rtl: boolean };
+
+/** English / Roman Balochi readers get the Roman text, Balochi / Urdu readers the
+ *  original script. If the "original" was typed in Latin letters it is treated as Roman. */
+export function verseFor(p: VerseSrc, lang: string): VerseView {
+  const origArab = hasArabic(p.original);
+  const roman = p.roman?.trim() ? p.roman : !origArab ? p.original : "";
+  const wantRoman = lang === "en" || lang === "bal-latn";
+  if (wantRoman && roman) return { text: roman, rtl: false };
+  if (origArab) return { text: p.original, rtl: true };
+  return { text: roman || p.original, rtl: false };
+}
+
+/** the other script, if there is one (for poem pages that show both) */
+export function verseOther(p: VerseSrc, lang: string): VerseView | null {
+  const main = verseFor(p, lang);
+  if (main.rtl) return p.roman?.trim() ? { text: p.roman, rtl: false } : null;
+  return hasArabic(p.original) ? { text: p.original, rtl: true } : null;
+}

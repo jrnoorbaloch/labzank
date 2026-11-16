@@ -11,7 +11,7 @@ import type { DictKey } from "@/lib/dict";
 import type { Poem, Poet, Video } from "@/lib/content";
 import { useContent } from "@/lib/content-store";
 import { page } from "@/lib/links";
-import { formByKey, formKey, formOrder } from "@/lib/forms";
+import { formByKey, formKey, formOrder, verseFor } from "@/lib/forms";
 import { Cover, Medallion } from "@/components/BrandSections";
 import { Verse } from "@/components/WordLookup";
 import { Latin, useTitle } from "./Literature";
@@ -79,7 +79,6 @@ export function PoetProfile({ p, tab }: { p: Poet; tab: string }) {
   ];
   const active = tabs.some((x) => x.key === tab) ? tab : "";
   const href = (k: string) => page("poets", k ? `${p.slug}/${k}` : p.slug);
-  const showRoman = lang === "en" || lang === "bal-latn";
 
   const share = async () => {
     const url = new URL(page("poets", p.slug), location.href).href;
@@ -108,14 +107,15 @@ export function PoetProfile({ p, tab }: { p: Poet; tab: string }) {
     return (
       <ul className="divide-y divide-[var(--faint)] border-y border-[var(--faint)]">
         {list.map((x) => {
-          const line = showRoman && x.roman ? x.roman.split("\n")[0] : x.original.split("\n")[0];
+          const v = verseFor(x, lang);
+          const line = v.text.split("\n")[0];
           return (
             <li key={x.id} className="flex items-center gap-3 py-3.5" data-profile-poem>
               <button onClick={() => pf.toggle(x.id)} aria-pressed={pf.has(x.id)} aria-label={t("pf.follow")} className={`shrink-0 ${pf.has(x.id) ? "text-[var(--rust)]" : "text-[var(--dim)] hover:text-[var(--gold)]"}`}>
                 <Heart on={pf.has(x.id)} />
               </button>
               <a href={page("poetry", x.id)} className="min-w-0 flex-1 truncate hover:text-[var(--gold)]">
-                {showRoman && x.roman ? (
+                {!v.rtl ? (
                   <span className="text-[15px]" lang="bal-Latn" dir="ltr">{line}</span>
                 ) : (
                   <span className="nastaliq text-[19px]" lang="bal" dir="rtl" style={{ lineHeight: 2 }}>{line}</span>
@@ -133,8 +133,13 @@ export function PoetProfile({ p, tab }: { p: Poet; tab: string }) {
     <div className="space-y-10">
       {list.map((x) => (
         <div key={x.id} className="text-center" data-profile-sher>
-          {showRoman && x.roman && <Verse text={x.roman.split("\n").slice(0, 2).join("\n")} className="text-[18px] italic leading-[1.9] tracking-wide" lang="bal-Latn" dir="ltr" />}
-          <Verse text={x.original.split("\n").slice(0, 2).join("\n")} className={`nastaliq text-[22px] ${showRoman && x.roman ? "mt-1 text-[var(--dim)]" : ""}`} lang="bal" dir="rtl" style={{ lineHeight: 2.2 }} />
+          {(() => {
+            const v = verseFor(x, lang);
+            const two = v.text.split("\n").slice(0, 2).join("\n");
+            return v.rtl
+              ? <Verse text={two} className="nastaliq text-[24px]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }} />
+              : <Verse text={two} className="text-[18px] italic leading-[1.9] tracking-wide" lang="bal-Latn" dir="ltr" />;
+          })()}
           <a href={page("poetry", x.id)} className="mx-auto mt-4 block h-px w-12 bg-[var(--faint)]" aria-label="Open" />
         </div>
       ))}

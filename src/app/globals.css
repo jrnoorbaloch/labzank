@@ -179,3 +179,6 @@ html[dir="rtl"] .sec-link { font-family: var(--arabic-body); letter-spacing: 0; 
 .lafz:hover { background: rgba(168,116,26,.12); }
 .lafz.on { background: rgba(168,116,26,.2); color: var(--gold-bright); }
 .lafz:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* decorative pattern layers never catch clicks */
+.doch-bg.absolute { pointer-events: none; }

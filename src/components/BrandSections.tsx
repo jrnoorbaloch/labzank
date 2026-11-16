@@ -27,7 +27,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 import Logo from "./Logo";
 import { Verse } from "./WordLookup";
-import { formByKey, formKey, formOrder } from "@/lib/forms";
+import { formByKey, formKey, formOrder, verseFor } from "@/lib/forms";
 
 /* ─────────────────────────── shared pieces ─────────────────────────── */
 
@@ -181,25 +181,24 @@ function TopPoetry() {
   if (!list.length) return null;
   const p = list[i % list.length];
   const poet = poets.find((x) => x.slug === p.authorSlug);
-  const lines = p.original.split("\n").slice(0, 2);
-  const roman = p.roman.split("\n").slice(0, 2);
+  const top = verseFor(p, lang);
   const isFav = fav.includes(p.id);
   const toggleFav = () => {
     const next = isFav ? fav.filter((x) => x !== p.id) : [...fav, p.id];
     setFav(next);
     try { localStorage.setItem("labzank-favs", JSON.stringify(next)); } catch {}
   };
-  const showRoman = lang === "en" || lang === "bal-latn";
   return (
     <Section id="poetry">
       <Title>{t("h.top")}</Title>
       <div className="flex items-center gap-4">
         <Arrow dir="prev" onClick={() => setI((x) => (x - 1 + list.length) % list.length)} label="Previous" />
         <div className="flex-1 text-center" data-top-poem={p.id}>
-          {showRoman && p.roman ? (
-            <Verse text={roman.join("\n")} className="font-[family-name:var(--latin-display)] text-[clamp(19px,1.8vw,25px)] italic leading-[1.9] text-[var(--text)]/85" lang="bal-Latn" dir="ltr" />
-          ) : null}
-          <Verse text={lines.join("\n")} className={`nastaliq text-[clamp(20px,2vw,28px)] text-[var(--text)] ${showRoman && p.roman ? "mt-2 text-[var(--dim)]" : ""}`} lang="bal" dir="rtl" style={{ lineHeight: 2.3 }} />
+          {top.rtl ? (
+            <Verse text={top.text.split("\n").slice(0, 2).join("\n")} className="nastaliq text-[clamp(22px,2.2vw,30px)] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 2.3 }} />
+          ) : (
+            <Verse text={top.text.split("\n").slice(0, 2).join("\n")} className="font-[family-name:var(--latin-display)] text-[clamp(19px,1.8vw,25px)] italic leading-[1.9] text-[var(--text)]/85" lang="bal-Latn" dir="ltr" />
+          )}
           <a href={poet ? page("poets", poet.slug) : page("poetry", p.id)} className="poet-name mt-3 inline-block text-[12px] uppercase tracking-[0.1em] text-[var(--text)] hover:text-[var(--gold)] rtl:text-[15px] rtl:normal-case rtl:tracking-normal">
             <Tx v={poet?.name ?? p.contributor} />
           </a>
@@ -361,7 +360,7 @@ function WordOfDay() {
 
 function TodaysSpecial() {
   const { poets, poems } = useContent();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [i, setI] = useState(0);
   useEffect(() => {
     const day = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 864e5);
@@ -383,10 +382,13 @@ function TodaysSpecial() {
         {verse && (
           <>
             <span className="mt-6 block h-px w-16 bg-[var(--gold)]/50" />
-            <Verse text={verse.original.split("\n").slice(0, 2).join("\n")} className="nastaliq mt-5 text-[20px] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }} />
-            {verse.roman && (
-              <Verse text={verse.roman.split("\n").slice(0, 2).join("\n")} className="mt-2 text-[17px] italic leading-relaxed text-[var(--text)]" lang="bal-Latn" dir="ltr" />
-            )}
+            {(() => {
+              const v = verseFor(verse, lang);
+              const two = v.text.split("\n").slice(0, 2).join("\n");
+              return v.rtl
+                ? <Verse text={two} className="nastaliq mt-5 text-[22px] text-[var(--text)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }} />
+                : <Verse text={two} className="mt-5 text-[18px] italic leading-relaxed text-[var(--text)]" lang="bal-Latn" dir="ltr" />;
+            })()}
           </>
         )}
         <a href={verse ? page("poetry", verse.id) : page("poets", p.slug)} className="sec-link">{verse ? t("s.potd.full") : t("s.potd.cta")}</a>

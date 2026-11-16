@@ -107,6 +107,11 @@ function WordCard({ o, onClose }: { o: Open; onClose: () => void }) {
     if (!el) return;
     const r = o.btn.getBoundingClientRect();
     const w = el.offsetWidth, h = el.offsetHeight, m = 10;
+    if (window.innerWidth < 640) {
+      // phones: a sheet at the bottom of the screen, so the verse stays visible
+      setPos({ left: (window.innerWidth - w) / 2, top: window.innerHeight - h - 12, below: true });
+      return;
+    }
     const left = Math.min(Math.max(m, r.left + r.width / 2 - w / 2), window.innerWidth - w - m);
     const below = r.top - h - m < 60; // not enough room above (fixed header)
     const top = below ? r.bottom + 8 : r.top - h - 8;

@@ -15,7 +15,7 @@ import { page } from "@/lib/links";
 import { siteName } from "@/lib/branding";
 import { Cover, Medallion, ReadPdf } from "@/components/BrandSections";
 import { Verse } from "@/components/WordLookup";
-import { formByKey, formKey, formOrder } from "@/lib/forms";
+import { formByKey, formKey, formOrder, verseFor, verseOther } from "@/lib/forms";
 import { PoetProfile } from "./PoetProfile";
 
 /* ─────────────────────────── shared ─────────────────────────── */
@@ -126,11 +126,13 @@ export function SectionTitle({ children }: { children: ReactNode }) {
 
 function PoemCard({ p, poets }: { p: Poem; poets: Poet[] }) {
   const poet = poets.find((x) => x.slug === p.authorSlug);
-  const lines = p.original.split("\n");
+  const { lang } = useLang();
+  const v = verseFor(p, lang);
+  const lines = v.text.split("\n");
   return (
     <a href={page("poetry", p.id)} className="card group flex flex-col p-6 transition-colors hover:border-[var(--gold)]/40">
       <Tx v={p.form} className="self-start rounded-full border border-[var(--gold)]/40 px-3 py-0.5 text-[12px] text-[var(--gold)]" />
-      <p className="nastaliq my-6 flex-1 whitespace-pre-line text-center text-[clamp(19px,1.7vw,24px)]" lang="bal" dir="rtl" style={{ lineHeight: 2.2 }}>
+      <p className={`my-6 flex-1 whitespace-pre-line text-center ${v.rtl ? "nastaliq text-[clamp(19px,1.7vw,24px)]" : "text-[17px] italic leading-[1.9]"}`} lang={v.rtl ? "bal" : "bal-Latn"} dir={v.rtl ? "rtl" : "ltr"} style={v.rtl ? { lineHeight: 2.2 } : undefined}>
         {lines.slice(0, 2).join("\n")}
         {lines.length > 2 && "…"}
       </p>
@@ -265,7 +267,7 @@ function PoemDetail({ p }: { p: Poem }) {
   const { poems, poets } = useContent();
   const { t, lang } = useLang();
   const poet = poets.find((x) => x.slug === p.authorSlug);
-  useTitle(p.original.split("\n")[0]);
+  useTitle(verseFor(p, lang).text.split("\n")[0]);
   const langs = (["en", "ur"] as const).filter((k) => p.translation[k]?.trim());
   const [tr, setTr] = useState<"en" | "ur">(lang === "ur" ? "ur" : "en");
   const shownTr = langs.includes(tr) ? tr : langs[0];
@@ -274,16 +276,17 @@ function PoemDetail({ p }: { p: Poem }) {
     <div className="section pt-12">
       <Back href={page("poetry")} label={t("nav.poetry")} />
       <article className="card relative overflow-hidden px-6 py-12 md:px-16 md:py-16">
-        <div className="doch-bg edge-fade absolute inset-x-0 top-0 h-40 opacity-20" />
+        <div className="doch-bg edge-fade pointer-events-none absolute inset-x-0 top-0 h-40 opacity-20" />
         <div className="relative flex flex-wrap items-center justify-between gap-3">
           <Tx v={p.form} className="rounded-full border border-[var(--gold)]/40 px-3 py-0.5 text-[12px] text-[var(--gold)]" />
           {p.sample && <span className="text-[12px] text-[var(--dim)]">{t("ui.sample")}</span>}
         </div>
         <p className="mt-4 text-center text-[12px] uppercase tracking-[0.2em] text-[var(--dim)]">{t("pg.original")}</p>
-        <Verse text={p.original} className="nastaliq relative mx-auto mt-6 max-w-[34ch] text-center text-[clamp(26px,3.2vw,44px)]" lang="bal" dir="rtl" style={{ lineHeight: 2.4 }} data-poem-original />
-        {p.roman && (
-          <Verse text={p.roman} className="mx-auto mt-8 max-w-[52ch] text-center font-[family-name:var(--latin-display)] text-[clamp(18px,1.6vw,22px)] italic leading-relaxed text-[var(--gold)]/85" lang="bal-Latn" dir="ltr" />
-        )}
+        {[verseFor(p, lang), verseOther(p, lang)].map((v, i) => !v ? null : v.rtl ? (
+          <Verse key={i} text={v.text} className={`nastaliq relative mx-auto max-w-[34ch] text-center ${i === 0 ? "mt-6 text-[clamp(26px,3.2vw,44px)]" : "mt-8 text-[clamp(20px,2vw,28px)] text-[var(--dim)]"}`} lang="bal" dir="rtl" style={{ lineHeight: 2.4 }} data-poem-original />
+        ) : (
+          <Verse key={i} text={v.text} className={`mx-auto max-w-[52ch] text-center font-[family-name:var(--latin-display)] italic leading-relaxed ${i === 0 ? "mt-6 text-[clamp(20px,2vw,28px)] text-[var(--text)]" : "mt-8 text-[clamp(17px,1.5vw,21px)] text-[var(--gold)]/85"}`} lang="bal-Latn" dir="ltr" />
+        ))}
         <p className="mt-4 text-center text-[12px] text-[var(--dim)]" data-word-hint>{t("w.hint")}</p>
         <div className="mx-auto mt-12 max-w-[640px] border-t border-[var(--faint)] pt-8">
           <div className="mb-4 flex items-center justify-between gap-3">
